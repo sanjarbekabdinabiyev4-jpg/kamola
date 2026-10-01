@@ -92,6 +92,8 @@ def main_menu():
     )
     # Kanalga o'tish tugmasi
     markup.add(InlineKeyboardButton("📢 Bizning rasmiy kanal", url=CHANNEL_LINK))
+    # Start (qaytadan boshlash) tugmasi
+    markup.add(InlineKeyboardButton("🔄 Qaytadan boshlash", callback_data="start_bot"))
     return markup
 
 @bot.message_handler(commands=['start'])
@@ -143,6 +145,31 @@ def contact_btn(message):
         "<i>Sizga xizmat ko'rsatishdan mamnunmiz! 💖</i>"
     )
     bot.send_message(message.chat.id, text, parse_mode='HTML')
+
+@bot.callback_query_handler(func=lambda call: call.data == 'start_bot')
+def handle_start_bot(call):
+    bot.answer_callback_query(call.id)
+    bot.delete_message(call.message.chat.id, call.message.message_id)
+    
+    reply_markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    reply_markup.add(
+        KeyboardButton("🛍 Katalog (Menyu)"), 
+        KeyboardButton("📢 Bizning kanal")
+    )
+    reply_markup.add(KeyboardButton("📞 Biz bilan aloqa"))
+    
+    welcome_text = (
+        f"🌸 <b>Assalomu alaykum, {call.from_user.first_name}!</b>\n\n"
+        "🎀 <i>Koreyaning eng sara, original va sifatli kosmetika olamiga xush kelibsiz!</i>\n\n"
+        "╭━━━━━━━━━━━━━━━━━━━╮\n"
+        "   Siz izlagan mukammallik \n"
+        "   aynan shu yerda! ✨\n"
+        "╰━━━━━━━━━━━━━━━━━━━╯\n\n"
+        "👇 <b>Katalogni ko'rish uchun quyidagi bo'limlardan birini tanlang:</b>"
+    )
+    
+    bot.send_message(call.message.chat.id, welcome_text, reply_markup=reply_markup, parse_mode='HTML')
+    bot.send_message(call.message.chat.id, "🗂 <b>MAHSULOTLAR KATALOGI:</b>", reply_markup=main_menu(), parse_mode='HTML')
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('cat_'))
 def show_products(call):
