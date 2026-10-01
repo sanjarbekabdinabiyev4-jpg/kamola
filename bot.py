@@ -189,8 +189,29 @@ def show_products(call):
             # Rasm topilmasa yoki muammo bo'lsa
             bot.send_message(call.message.chat.id, text, reply_markup=markup, parse_mode='HTML')
 
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import os
+
+class DummyHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        self.wfile.write(b"Bot is running!")
+
+def run_dummy_server():
+    port = int(os.environ.get("PORT", 8000))
+    server_address = ('0.0.0.0', port)
+    httpd = HTTPServer(server_address, DummyHandler)
+    httpd.serve_forever()
+
 if __name__ == '__main__':
     print("Bot ishga tushdi... (To'xtatish uchun Ctrl+C bosing)")
+    
+    # Render platformasi uchun soxta veb-serverni alohida oqimda (thread) ishga tushirish
+    threading.Thread(target=run_dummy_server, daemon=True).start()
+    
     try:
         bot.polling(none_stop=True)
     except Exception as e:
