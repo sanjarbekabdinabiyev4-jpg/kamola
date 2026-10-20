@@ -71,22 +71,19 @@
 
     <!-- Tabs Navigation -->
     <div class="admin-tabs">
-        <button class="admin-tab-btn active" id="tabUsersBtn" onclick="switchAdminTab('users')">
-            <i class="fa-solid fa-users-gear"></i> Foydalanuvchilar ({{ users|length }})
-        </button>
-        <button class="admin-tab-btn" id="tabQuestionsBtn" onclick="switchAdminTab('questions')">
-            <i class="fa-solid fa-file-circle-question"></i> Test Savollari ({{ questions|length }})
+        <button class="admin-tab-btn active" id="tabQuestionsBtn" onclick="switchAdminTab('questions')">
+            <i class="fa-solid fa-file-circle-question"></i> Yangi Test Savollari ({{ questions|length }})
         </button>
         <button class="admin-tab-btn" id="tabPuzzlesBtn" onclick="switchAdminTab('puzzles')">
-            <i class="fa-solid fa-puzzle-piece"></i> Kod Puzzlelar ({{ puzzles|length }})
+            <i class="fa-solid fa-puzzle-piece"></i> Yangi Kod Puzzlelar ({{ puzzles|length }})
         </button>
-        <button class="admin-tab-btn" id="tabLogsBtn" onclick="switchAdminTab('logs')">
-            <i class="fa-solid fa-clock-rotate-left"></i> O'yinlar Tarixi ({{ stats.recent_games|length }})
+        <button class="admin-tab-btn" id="tabUsersBtn" onclick="switchAdminTab('users')">
+            <i class="fa-solid fa-users-gear"></i> Foydalanuvchilar Ro'yxati ({{ users|length }})
         </button>
     </div>
 
     <!-- 1. FOYDALANUVCHILAR BO'LIMI -->
-    <div id="adminSectionUsers" class="admin-section-card">
+    <div id="adminSectionUsers" class="admin-section-card" style="display: none;">
         <div class="admin-card-header">
             <h3><i class="fa-solid fa-users"></i> Ro'yxatdan O'tgan Foydalanuvchilar</h3>
             <span style="color: var(--text-muted); font-size: 0.88rem;">Jami: {{ users|length }} ta</span>
@@ -140,8 +137,8 @@
         </div>
     </div>
 
-    <!-- 2. SAVOLLAR BO'LIMI -->
-    <div id="adminSectionQuestions" class="admin-section-card" style="display: none;">
+    <!-- 2. SAVOLLAR BO'LIMI (Yangi test savoli qo'shish va boshqarish) -->
+    <div id="adminSectionQuestions" class="admin-section-card">
         <div class="admin-card-header">
             <h3><i class="fa-solid fa-plus-circle"></i> Yangi Test Savoli Qo'shish</h3>
         </div>

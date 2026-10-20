@@ -13,6 +13,7 @@
         </p>
     </div>
 
+    {% if current_user %}
     <!-- Game Navigation Tabs -->
     <div class="games-tabs">
         <button class="game-tab-btn active" id="tabBtnQuiz" onclick="switchGameMode('quiz')">
@@ -194,6 +195,26 @@ print(len(a))
             </button>
         </div>
     </div>
+    {% else %}
+    <!-- ==================== LOCK SCREEN FOR GUESTS ==================== -->
+    <div class="game-lock-container">
+        <div class="game-lock-icon">
+            <i class="fa-solid fa-lock"></i>
+        </div>
+        <h2 class="game-lock-title">O'yinlar Qulflangan!</h2>
+        <p class="game-lock-desc">
+            Mini o'yinlar, Quiz testlar va kodli puzzlelarni o'ynash hamda to'plagan XP ballaringiz bilan peshqadamlar jadvaliga kirish uchun <strong>avval shaxsiy hisobingizga kiring</strong> yoki bepul ro'yxatdan o'ting!
+        </p>
+        <div class="game-lock-actions">
+            <a href="{{ url_for('auth_page') }}" class="btn btn-glow-primary">
+                <i class="fa-solid fa-right-to-bracket"></i> Tizimga Kirish / Ro'yxatdan O'tish
+            </a>
+            <a href="{{ url_for('learn_page') }}" class="btn btn-outline">
+                <i class="fa-solid fa-book-bookmark"></i> Dasturlash Darslarini O'qish
+            </a>
+        </div>
+    </div>
+    {% endif %}
 
     <!-- ==================== LIVE LEADERBOARD ==================== -->
     <div class="leaderboard-section">

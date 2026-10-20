@@ -476,14 +476,17 @@ function escapeHtml(str) {
 
 // Initialize on page load
 document.addEventListener("DOMContentLoaded", () => {
-    renderQuizQuestion();
-    renderPuzzle();
-    renderBugChallenge();
-    renderOutputChallenge();
+    // Agar foydalanuvchi tizimga kirgan bo'lsa va o'yin maydoni mavjud bo'lsa
+    if (document.getElementById("gameSectionQuiz")) {
+        renderQuizQuestion();
+        renderPuzzle();
+        renderBugChallenge();
+        renderOutputChallenge();
 
-    // URL da hash bo'lsa kerakli o'yinga o'tish (#puzzle, #bug, #output)
-    const hash = window.location.hash.replace("#", "");
-    if (['quiz', 'puzzle', 'bug', 'output'].includes(hash)) {
-        switchGameMode(hash);
+        // URL da hash bo'lsa kerakli o'yinga o'tish (#puzzle, #bug, #output)
+        const hash = window.location.hash.replace("#", "");
+        if (['quiz', 'puzzle', 'bug', 'output'].includes(hash)) {
+            switchGameMode(hash);
+        }
     }
 });
