@@ -45,6 +45,11 @@ def inject_user():
 
     return dict(current_user=current_user, current_admin=current_admin)
 
+# Healthcheck / Keep-alive endpoint (Serverni uxlatmaslik uchun)
+@app.route("/ping")
+def ping():
+    return jsonify({"status": "ok", "message": "AlgoPlay server is alive!"}), 200
+
 # ==================== 1-SAHIFA: HOME ====================
 @app.route("/")
 def home_page():
