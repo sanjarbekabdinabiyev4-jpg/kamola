@@ -69,44 +69,50 @@ def auth_page():
 
 @app.route("/api/auth/register", methods=["POST"])
 def api_register():
-    data = request.get_json() or {}
-    phone = data.get("phone", "").strip()
-    username = data.get("username", "").strip()
-    password = data.get("password", "").strip()
+    try:
+        data = request.get_json(silent=True) or {}
+        phone = data.get("phone", "").strip()
+        username = data.get("username", "").strip()
+        password = data.get("password", "").strip()
 
-    if not phone or not username or not password:
-        return jsonify({"success": False, "message": "Barcha maydonlarni to'ldiring!"}), 400
+        if not phone or not username or not password:
+            return jsonify({"success": False, "message": "Barcha maydonlarni to'ldiring!"}), 400
 
-    if len(username) < 3:
-        return jsonify({"success": False, "message": "Foydalanuvchi nomi kamida 3 belgidan iborat bo'lishi kerak!"}), 400
+        if len(username) < 3:
+            return jsonify({"success": False, "message": "Foydalanuvchi nomi kamida 3 belgidan iborat bo'lishi kerak!"}), 400
 
-    if len(password) < 4:
-        return jsonify({"success": False, "message": "Parol kamida 4 belgidan iborat bo'lishi kerak!"}), 400
+        if len(password) < 4:
+            return jsonify({"success": False, "message": "Parol kamida 4 belgidan iborat bo'lishi kerak!"}), 400
 
-    success, user_id, message = db.register_user(phone, username, password)
-    if success:
-        session["user_id"] = user_id
-        session["username"] = username
-        return jsonify({"success": True, "message": message, "user": {"id": user_id, "username": username, "phone": phone, "xp": 0, "level": 1}})
-    else:
-        return jsonify({"success": False, "message": message}), 400
+        success, user_id, message = db.register_user(phone, username, password)
+        if success:
+            session["user_id"] = user_id
+            session["username"] = username
+            return jsonify({"success": True, "message": message, "user": {"id": user_id, "username": username, "phone": phone, "xp": 0, "level": 1}})
+        else:
+            return jsonify({"success": False, "message": message}), 400
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Serverda xatolik yuz berdi: {str(e)}"}), 500
 
 @app.route("/api/auth/login", methods=["POST"])
 def api_login():
-    data = request.get_json() or {}
-    phone_or_user = data.get("phone_or_user", "").strip()
-    password = data.get("password", "").strip()
+    try:
+        data = request.get_json(silent=True) or {}
+        phone_or_user = data.get("phone_or_user", "").strip()
+        password = data.get("password", "").strip()
 
-    if not phone_or_user or not password:
-        return jsonify({"success": False, "message": "Login va parolni kiriting!"}), 400
+        if not phone_or_user or not password:
+            return jsonify({"success": False, "message": "Login va parolni kiriting!"}), 400
 
-    success, user, message = db.login_user(phone_or_user, password)
-    if success:
-        session["user_id"] = user["id"]
-        session["username"] = user["username"]
-        return jsonify({"success": True, "message": message, "user": user})
-    else:
-        return jsonify({"success": False, "message": message}), 401
+        success, user, message = db.login_user(phone_or_user, password)
+        if success:
+            session["user_id"] = user["id"]
+            session["username"] = user["username"]
+            return jsonify({"success": True, "message": message, "user": user})
+        else:
+            return jsonify({"success": False, "message": message}), 401
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Serverda xatolik yuz berdi: {str(e)}"}), 500
 
 @app.route("/api/auth/logout", methods=["POST", "GET"])
 def api_logout():

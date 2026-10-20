@@ -206,24 +206,32 @@ async function handleLogin(e) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ phone_or_user: phoneOrUser, password: password })
         });
-        const data = await res.json();
+        
+        let data = null;
+        try {
+            data = await res.json();
+        } catch (je) {
+            data = null;
+        }
 
-        if (data.success) {
+        if (res.ok && data && data.success) {
             sfx.correct();
             fireConfetti();
             showToast("Muvaffaqiyatli kirdingiz! Xush kelibsiz!", "success");
             setTimeout(() => {
                 window.location.href = "{{ url_for('games_page') }}";
-            }, 1000);
+            }, 800);
         } else {
             sfx.wrong();
-            showToast(data.message || "Kirishda xatolik yuz berdi!", "danger");
+            const msg = (data && data.message) ? data.message : "Login yoki parol noto'g'ri!";
+            showToast(msg, "danger");
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Tizimga Kirish';
         }
     } catch (err) {
         sfx.wrong();
-        showToast("Server bilan bog'lanishda xatolik yuz berdi!", "danger");
+        console.error("Login xatosi:", err);
+        showToast("Server ishga tushmoqda, iltimos 5-10 soniya kuting va qayta urinib ko'ring!", "danger");
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Tizimga Kirish';
     }
@@ -251,24 +259,32 @@ async function handleRegister(e) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ phone, username, password })
         });
-        const data = await res.json();
+        
+        let data = null;
+        try {
+            data = await res.json();
+        } catch (je) {
+            data = null;
+        }
 
-        if (data.success) {
+        if (res.ok && data && data.success) {
             sfx.correct();
             fireConfetti();
             showToast("Hisob yaratildi! AlgoPlay olamiga xush kelibsiz!", "success");
             setTimeout(() => {
                 window.location.href = "{{ url_for('games_page') }}";
-            }, 1000);
+            }, 800);
         } else {
             sfx.wrong();
-            showToast(data.message || "Ro'yxatdan o'tishda xatolik!", "danger");
+            const msg = (data && data.message) ? data.message : "Ro'yxatdan o'tishda xatolik yuz berdi!";
+            showToast(msg, "danger");
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Hisob Yaratish';
         }
     } catch (err) {
         sfx.wrong();
-        showToast("Server bilan aloqa xatosi!", "danger");
+        console.error("Register xatosi:", err);
+        showToast("Server ishga tushmoqda, iltimos 5-10 soniya kuting va qayta urinib ko'ring!", "danger");
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Hisob Yaratish';
     }

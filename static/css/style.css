@@ -1038,26 +1038,36 @@ h1, h2, h3, h4, h5, h6 {
     position: relative;
     display: flex;
     align-items: center;
+    width: 100%;
 }
 
-.form-input-box i {
+.form-input-box > i:first-child {
     position: absolute;
     left: 16px;
     color: var(--text-muted);
     font-size: 1.05rem;
     transition: var(--transition);
+    pointer-events: none;
+    z-index: 2;
 }
 
 .form-input {
     width: 100%;
-    padding: 14px 16px 14px 48px;
-    background: rgba(10, 15, 27, 0.8);
+    padding: 13px 48px 13px 46px;
+    background: rgba(10, 15, 27, 0.85);
     border: 1px solid var(--border-glass);
     border-radius: var(--radius-md);
     color: #ffffff;
-    font-size: 0.96rem;
+    font-size: 0.95rem;
     font-family: var(--font-main);
     transition: var(--transition);
+    box-sizing: border-box !important;
+    overflow: hidden;
+}
+
+input[type="password"].form-input {
+    padding-right: 52px !important;
+    letter-spacing: 1.5px;
 }
 
 .form-input:focus {
@@ -1067,7 +1077,7 @@ h1, h2, h3, h4, h5, h6 {
     background: rgba(15, 23, 42, 0.95);
 }
 
-.form-input:focus + i {
+.form-input:focus ~ i:first-child {
     color: var(--cyan);
 }
 
@@ -1869,7 +1879,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .password-toggle-btn {
     position: absolute;
-    right: 14px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -1878,10 +1888,19 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1rem;
     cursor: pointer;
     transition: var(--transition);
-    padding: 6px;
+    padding: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 5;
+}
+
+.password-toggle-btn i {
+    position: static !important;
+    left: auto !important;
+    font-size: 1.05rem !important;
+    color: inherit !important;
+    pointer-events: auto !important;
 }
 
 .password-toggle-btn:hover {
