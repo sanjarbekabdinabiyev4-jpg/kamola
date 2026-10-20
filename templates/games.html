@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Mini O'yinlar & Testlar - AlgoPlay{% endblock %}
+
+{% block content %}
+<div class="games-container">
+    <!-- Hero Header -->
+    <div class="games-hero">
+        <span class="section-tag"><i class="fa-solid fa-gamepad"></i> O'yinlar Maydoni</span>
+        <h1 class="section-title">O'ynang, Sinang va <span class="gradient-text">XP To'plang!</span></h1>
+        <p class="section-subtitle">
+            3-sahifadagi darslarni o'qigan bo'lsangiz, bilimingizni amalda sinab ko'rish vaqti keldi!
+        </p>
+    </div>
+
+    <!-- Game Navigation Tabs -->
+    <div class="games-tabs">
+        <button class="game-tab-btn active" id="tabBtnQuiz" onclick="switchGameMode('quiz')">
+            <i class="fa-solid fa-brain"></i> 1. Quiz Arena (Savol-Javob)
+        </button>
+        <button class="game-tab-btn" id="tabBtnPuzzle" onclick="switchGameMode('puzzle')">
+            <i class="fa-solid fa-puzzle-piece"></i> 2. Kod Puzzle (Tartiblash)
+        </button>
+        <button class="game-tab-btn" id="tabBtnBug" onclick="switchGameMode('bug')">
+            <i class="fa-solid fa-bug"></i> 3. Bug Hunter (Xatoni Top)
+        </button>
+        <button class="game-tab-btn" id="tabBtnOutput" onclick="switchGameMode('output')">
+            <i class="fa-solid fa-terminal"></i> 4. Natijani Top (Output)
+        </button>
+    </div>
+
+    <!-- ==================== GAME 1: QUIZ ARENA ==================== -->
+    <div id="gameSectionQuiz" class="game-arena-card">
+        <div class="quiz-header-bar">
+            <div>
+                <span style="color: var(--cyan); font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">
+                    <i class="fa-solid fa-circle-question"></i> <span id="quizCategory">Python Asoslari</span>
+                </span>
+                <h3 style="font-size: 1.15rem; margin-top: 4px;">Savol <span id="quizCurrentNum">1</span> / <span id="quizTotalNum">{{ questions|length }}</span></h3>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span id="quizStreakBadge" class="quiz-combo-badge" style="display: none;">
+                    <i class="fa-solid fa-fire"></i> <span id="quizStreakCount">0</span>x Combo!
+                </span>
+                <div class="quiz-score-badge">
+                    <i class="fa-solid fa-star"></i>
+                    <span>XP: <strong id="quizUserScore">0</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <div id="quizContentBox">
+            <div class="quiz-question-text" id="quizQuestionText">Yuklanmoqda...</div>
+            <div class="quiz-code-box" id="quizCodeBox" style="display: none;"></div>
+
+            <div class="quiz-options-grid" id="quizOptionsGrid">
+                <!-- Javascript orqali variantlar joylanadi -->
+            </div>
+
+            <!-- Tushuntirish va keyingi savol -->
+            <div class="quiz-feedback-box" id="quizFeedbackBox" style="display: none;">
+                <div>
+                    <h4 id="quizFeedbackTitle" style="margin-bottom: 6px;"></h4>
+                    <p id="quizFeedbackText" style="font-size: 0.92rem; color: var(--text-secondary);"></p>
+                </div>
+                <button class="btn btn-glow-primary btn-sm" id="quizNextBtn" onclick="nextQuizQuestion()">
+                    Keyingisi <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Quiz Tamomlangan xabar -->
+        <div id="quizFinishBox" style="display: none; text-align: center; padding: 40px 20px;">
+            <div style="font-size: 4rem; color: #fbbf24; margin-bottom: 16px;">🏆</div>
+            <h2 style="font-size: 2.2rem; margin-bottom: 12px;">Ajoyib Natija! Test Yakunlandi!</h2>
+            <p style="font-size: 1.1rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto 24px;">
+                Siz barcha savollarni muvaffaqiyatli yakunladingiz va <strong id="quizFinalXp" style="color: var(--amber);">+0 XP</strong> ga ega bo'ldingiz!
+            </p>
+            <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn btn-glow-primary" onclick="restartQuiz()">
+                    <i class="fa-solid fa-rotate-right"></i> Qaytadan O'ynash
+                </button>
+                <button class="btn btn-glow-purple" onclick="switchGameMode('puzzle')">
+                    <i class="fa-solid fa-puzzle-piece"></i> Kod Puzzleni Boshlash
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== GAME 2: KOD PUZZLE ==================== -->
+    <div id="gameSectionPuzzle" class="game-arena-card" style="display: none;">
+        <div class="quiz-header-bar">
+            <div>
+                <span style="color: #c084fc; font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">
+                    <i class="fa-solid fa-puzzle-piece"></i> Kod Tartiblash Puzzli
+                </span>
+                <h3 style="font-size: 1.15rem; margin-top: 4px;" id="puzzleTitle">Puzzle 1</h3>
+            </div>
+            <div class="quiz-score-badge">
+                <i class="fa-solid fa-award"></i>
+                <span>Mukofot: <strong id="puzzleReward">25</strong> XP</span>
+            </div>
+        </div>
+
+        <p id="puzzleDesc" style="color: var(--text-secondary); font-size: 1rem; margin-bottom: 20px;">
+            Kod bloklarini to'g'ri mantiqiy ketma-ketlikda joylashtiring. Bloklarni ko'chirish uchun ⬆️ va ⬇️ tugmalarini bosing yoki sichqoncha bilan siljiting.
+        </p>
+
+        <div class="puzzle-blocks-container" id="puzzleBlocksContainer">
+            <!-- Bloklar JS orqali to'ldiriladi -->
+        </div>
+
+        <div id="puzzleFeedback" style="display: none; padding: 14px 18px; border-radius: var(--radius-md); margin-bottom: 20px; font-weight: 600;"></div>
+
+        <div class="puzzle-actions">
+            <button class="btn btn-glow-primary" onclick="checkPuzzleOrder()">
+                <i class="fa-solid fa-check-double"></i> Kodni Tekshirish
+            </button>
+            <button class="btn btn-outline" onclick="nextPuzzle()">
+                <i class="fa-solid fa-forward-step"></i> Keyingi Puzzle
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== GAME 3: BUG HUNTER ==================== -->
+    <div id="gameSectionBug" class="game-arena-card" style="display: none;">
+        <div class="quiz-header-bar">
+            <div>
+                <span style="color: #f43f5e; font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">
+                    <i class="fa-solid fa-bug"></i> Bug Hunter (Xatoni Topish)
+                </span>
+                <h3 style="font-size: 1.15rem; margin-top: 4px;" id="bugTitle">Xatoni Toping</h3>
+            </div>
+            <div class="quiz-score-badge">
+                <i class="fa-solid fa-shield-virus"></i>
+                <span>Mukofot: <strong id="bugReward">20</strong> XP</span>
+            </div>
+        </div>
+
+        <p style="color: var(--text-secondary); margin-bottom: 16px;">
+            Quyidagi Python kodida xatolik yashiringan. Uni diqqat bilan o'rganing va to'g'ri sababni tanlang:
+        </p>
+
+        <div class="quiz-code-box" id="bugCodeBox" style="color: #fca5a5;"></div>
+
+        <div class="quiz-options-grid" id="bugOptionsGrid">
+            <!-- Bug variantlari JS orqali to'ldiriladi -->
+        </div>
+
+        <div class="quiz-feedback-box" id="bugFeedbackBox" style="display: none;">
+            <div>
+                <h4 id="bugFeedbackTitle" style="margin-bottom: 6px;"></h4>
+                <p id="bugFeedbackText" style="font-size: 0.92rem; color: var(--text-secondary);"></p>
+            </div>
+            <button class="btn btn-glow-purple btn-sm" onclick="nextBugChallenge()">
+                Keyingi Xatolik <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== GAME 4: CODE OUTPUT ==================== -->
+    <div id="gameSectionOutput" class="game-arena-card" style="display: none;">
+        <div class="quiz-header-bar">
+            <div>
+                <span style="color: var(--amber); font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">
+                    <i class="fa-solid fa-terminal"></i> Terminal Natijasini Top
+                </span>
+                <h3 style="font-size: 1.15rem; margin-top: 4px;">Ushbu kod qanday natija chiqaradi?</h3>
+            </div>
+            <div class="quiz-score-badge">
+                <i class="fa-solid fa-bolt"></i>
+                <span>XP: <strong id="outputReward">15</strong> XP</span>
+            </div>
+        </div>
+
+        <div class="quiz-code-box" id="outputCodeBox">
+a = [1, 2, 3]
+b = a
+b.append(4)
+print(len(a))
+        </div>
+
+        <div class="quiz-options-grid" id="outputOptionsGrid">
+            <!-- JS da yuklanadi -->
+        </div>
+
+        <div class="quiz-feedback-box" id="outputFeedbackBox" style="display: none;">
+            <div>
+                <h4 id="outputFeedbackTitle"></h4>
+                <p id="outputFeedbackText" style="font-size: 0.92rem; color: var(--text-secondary);"></p>
+            </div>
+            <button class="btn btn-glow-primary btn-sm" onclick="nextOutputChallenge()">
+                Keyingisi <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== LIVE LEADERBOARD ==================== -->
+    <div class="leaderboard-section">
+        <div class="section-header">
+            <span class="section-tag">Eng Zo'r O'yinchilar</span>
+            <h2 class="section-title">Peshqadamlar <span class="gradient-text">Jadvali</span></h2>
+            <p class="section-subtitle">O'yinlarda ko'proq XP to'plang va ushbu ro'yxatning eng yuqorisiga ko'tariling!</p>
+        </div>
+
+        <div class="leaderboard-table-container">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">O'rin</th>
+                        <th>Foydalanuvchi</th>
+                        <th>Telefon</th>
+                        <th>Daraja (Level)</th>
+                        <th>Jami XP</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                    {% for u in leaderboard %}
+                    <tr>
+                        <td>
+                            <span class="rank-badge {% if loop.index == 1 %}rank-1{% elif loop.index == 2 %}rank-2{% elif loop.index == 3 %}rank-3{% else %}rank-other{% endif %}">
+                                {% if loop.index == 1 %}👑 1{% else %}{{ loop.index }}{% endif %}
+                            </span>
+                        </td>
+                        <td><strong style="color: #fff;">{{ u.username }}</strong></td>
+                        <td style="color: var(--text-muted);">{{ u.phone[:6] }}***{{ u.phone[-2:] if u.phone|length >= 8 else '' }}</td>
+                        <td><span style="color: var(--cyan); font-weight: 700;">Lv.{{ u.level }}</span></td>
+                        <td><span style="color: var(--amber); font-weight: 800; font-family: var(--font-code);">{{ u.xp }} XP</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Embedded Data For Client Side Games -->
+<script>
+    window.ALGOPLAY_QUESTIONS = {{ questions|tojson }};
+    window.ALGOPLAY_PUZZLES = {{ puzzles|tojson }};
+    window.ALGOPLAY_BUGS = {{ bugs|tojson }};
+    window.CURRENT_USER = {{ (current_user|tojson) if current_user else 'null' }};
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/games.js') }}"></script>
+{% endblock %}

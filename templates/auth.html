@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}Kirish & Ro'yxatdan O'tish - AlgoPlay{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-container">
+        {% if current_user %}
+        <!-- Foydalanuvchi tizimga kirgan bo'lsa - Profil kartasi -->
+        <div class="auth-profile-card">
+            <div class="profile-avatar-big">
+                <i class="fa-solid fa-user-astronaut"></i>
+            </div>
+            <h2 class="profile-username">{{ current_user.username }}</h2>
+            <div style="margin-bottom: 12px;">
+                <span class="badge-beta" style="font-size: 0.8rem; padding: 4px 12px; background: rgba(121, 40, 202, 0.2); border-color: rgba(121, 40, 202, 0.4); color: #c084fc;">
+                    {% if current_user.level >= 5 %}
+                        👑 Grandmaster Dasturchi
+                    {% elif current_user.level >= 3 %}
+                        🔥 Algoritm Ustasi
+                    {% elif current_user.level >= 2 %}
+                        ⚡ Tezkor Koder
+                    {% else %}
+                        🌱 Boshlovchi Qahramon
+                    {% endif %}
+                </span>
+            </div>
+            <p class="profile-phone"><i class="fa-solid fa-phone"></i> {{ current_user.phone }}</p>
+
+            <div class="profile-stats-grid">
+                <div class="profile-stat-box">
+                    <div class="val">{{ current_user.level }}</div>
+                    <div class="lbl">Daraja (Level)</div>
+                </div>
+                <div class="profile-stat-box">
+                    <div class="val">{{ current_user.xp }}</div>
+                    <div class="lbl">To'plangan XP</div>
+                </div>
+            </div>
+
+            <!-- XP Progress Bar -->
+            <div style="margin-bottom: 24px; text-align: left;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 6px;">
+                    <span>Keyingi darajagacha progress</span>
+                    <span style="color: var(--cyan); font-weight: 700;">{{ current_user.xp % 100 }} / 100 XP</span>
+                </div>
+                <div style="height: 10px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; padding: 2px;">
+                    <div style="width: {{ current_user.xp % 100 }}%; height: 100%; background: var(--gradient-primary); border-radius: 999px; box-shadow: 0 0 10px rgba(0, 242, 254, 0.5); transition: width 0.5s ease;"></div>
+                </div>
+            </div>
+
+            <!-- Yutuqlar (Achievements) Badges -->
+            <div style="margin-bottom: 28px; padding-top: 18px; border-top: 1px solid var(--border-glass);">
+                <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; display: block; margin-bottom: 12px;">Erishilgan Nishonlar</span>
+                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                    <span class="badge-beta" title="Platformaga qo'shildi" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3);">
+                        <i class="fa-solid fa-flag-checkered"></i> Birinchi Qadam
+                    </span>
+                    <span class="badge-beta" title="Testlarda faol" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border-color: rgba(251, 191, 36, 0.3);">
+                        <i class="fa-solid fa-brain"></i> Bilimdon
+                    </span>
+                    <span class="badge-beta" title="Xatolarni topuvchi" style="background: rgba(236, 72, 153, 0.15); color: #f472b6; border-color: rgba(236, 72, 153, 0.3);">
+                        <i class="fa-solid fa-bug-slash"></i> Bug Hunter
+                    </span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                <a href="{{ url_for('games_page') }}" class="btn btn-glow-primary">
+                    <i class="fa-solid fa-gamepad"></i> O'yinlarga O'tish
+                </a>
+                <a href="{{ url_for('api_logout') }}" class="btn btn-danger">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Chiqish
+                </a>
+            </div>
+        </div>
+
+        {% else %}
+        <!-- Tizimga kirish / Ro'yxatdan o'tish formasi -->
+        <div class="auth-tabs">
+            <button class="auth-tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> Kirish
+            </button>
+            <button class="auth-tab-btn" id="tabRegisterBtn" onclick="switchAuthTab('register')">
+                <i class="fa-solid fa-user-plus"></i> Ro'yxatdan O'tish
+            </button>
+        </div>
+
+        <div class="auth-content">
+            <!-- 1. LOGIN FORM -->
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label" for="loginPhoneOrUser">Telefon raqam yoki Foydalanuvchi nomi</label>
+                    <div class="form-input-box">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="loginPhoneOrUser" class="form-input" placeholder="+998901234567 yoki username" required autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Parol</label>
+                    <div class="form-input-box">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="loginPassword" class="form-input" placeholder="Parolingizni kiriting" required autocomplete="current-password">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-glow-primary" style="width: 100%; margin-top: 10px;" id="loginSubmitBtn">
+                    <i class="fa-solid fa-right-to-bracket"></i> Tizimga Kirish
+                </button>
+
+                <p style="text-align: center; margin-top: 20px; font-size: 0.88rem; color: var(--text-muted);">
+                    Hisobingiz yo'qmi? 
+                    <a href="javascript:void(0)" onclick="switchAuthTab('register')" style="color: var(--cyan); font-weight: 600; text-decoration: none;">
+                        Ro'yxatdan o'ting
+                    </a>
+                </p>
+            </form>
+
+            <!-- 2. REGISTER FORM -->
+            <form id="registerForm" onsubmit="handleRegister(event)" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label" for="regPhone">Telefon Raqami</label>
+                    <div class="form-input-box">
+                        <i class="fa-solid fa-phone"></i>
+                        <input type="tel" id="regPhone" class="form-input" placeholder="+998901234567" required autocomplete="tel">
+                    </div>
+                    <span class="form-hint">Masalan: +998901234567</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="regUsername">Foydalanuvchi Nomi (Username)</label>
+                    <div class="form-input-box">
+                        <i class="fa-solid fa-id-badge"></i>
+                        <input type="text" id="regUsername" class="form-input" placeholder="kamola_coder" required autocomplete="username">
+                    </div>
+                    <span class="form-hint">Kamida 3 ta belgi, bo'sh joysiz</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="regPassword">Parol</label>
+                    <div class="form-input-box">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="regPassword" class="form-input" placeholder="Yangi parol kiriting" required autocomplete="new-password">
+                    </div>
+                    <span class="form-hint">Kamida 4 ta belgi</span>
+                </div>
+
+                <button type="submit" class="btn btn-glow-purple" style="width: 100%; margin-top: 10px;" id="regSubmitBtn">
+                    <i class="fa-solid fa-user-plus"></i> Hisob Yaratish
+                </button>
+
+                <p style="text-align: center; margin-top: 20px; font-size: 0.88rem; color: var(--text-muted);">
+                    Allaqachon hisobingiz bormi? 
+                    <a href="javascript:void(0)" onclick="switchAuthTab('login')" style="color: var(--cyan); font-weight: 600; text-decoration: none;">
+                        Tizimga kiring
+                    </a>
+                </p>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function switchAuthTab(tab) {
+    sfx.click();
+    const loginForm = document.getElementById("loginForm");
+    const regForm = document.getElementById("registerForm");
+    const tabLoginBtn = document.getElementById("tabLoginBtn");
+    const tabRegisterBtn = document.getElementById("tabRegisterBtn");
+
+    if (tab === 'login') {
+        loginForm.style.display = "block";
+        regForm.style.display = "none";
+        tabLoginBtn.classList.add("active");
+        tabRegisterBtn.classList.remove("active");
+    } else {
+        loginForm.style.display = "none";
+        regForm.style.display = "block";
+        tabLoginBtn.classList.remove("active");
+        tabRegisterBtn.classList.add("active");
+    }
+}
+
+async function handleLogin(e) {
+    e.preventDefault();
+    const phoneOrUser = document.getElementById("loginPhoneOrUser").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+    const submitBtn = document.getElementById("loginSubmitBtn");
+
+    if (!phoneOrUser || !password) {
+        showToast("Barcha maydonlarni to'ldiring!", "danger");
+        sfx.wrong();
+        return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Tekshirilmoqda...';
+
+    try {
+        const res = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phone_or_user: phoneOrUser, password: password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            sfx.correct();
+            fireConfetti();
+            showToast("Muvaffaqiyatli kirdingiz! Xush kelibsiz!", "success");
+            setTimeout(() => {
+                window.location.href = "{{ url_for('games_page') }}";
+            }, 1000);
+        } else {
+            sfx.wrong();
+            showToast(data.message || "Kirishda xatolik yuz berdi!", "danger");
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Tizimga Kirish';
+        }
+    } catch (err) {
+        sfx.wrong();
+        showToast("Server bilan bog'lanishda xatolik yuz berdi!", "danger");
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Tizimga Kirish';
+    }
+}
+
+async function handleRegister(e) {
+    e.preventDefault();
+    const phone = document.getElementById("regPhone").value.trim();
+    const username = document.getElementById("regUsername").value.trim();
+    const password = document.getElementById("regPassword").value.trim();
+    const submitBtn = document.getElementById("regSubmitBtn");
+
+    if (!phone || !username || !password) {
+        showToast("Barcha maydonlarni to'ldiring!", "danger");
+        sfx.wrong();
+        return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Yaratilmoqda...';
+
+    try {
+        const res = await fetch("/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phone, username, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            sfx.correct();
+            fireConfetti();
+            showToast("Hisob yaratildi! AlgoPlay olamiga xush kelibsiz!", "success");
+            setTimeout(() => {
+                window.location.href = "{{ url_for('games_page') }}";
+            }, 1000);
+        } else {
+            sfx.wrong();
+            showToast(data.message || "Ro'yxatdan o'tishda xatolik!", "danger");
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Hisob Yaratish';
+        }
+    } catch (err) {
+        sfx.wrong();
+        showToast("Server bilan aloqa xatosi!", "danger");
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Hisob Yaratish';
+    }
+}
+</script>
+{% endblock %}

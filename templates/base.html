@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AlgoPlay - O'yinlar Orqali Dasturlashni O'rganish{% endblock %}</title>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-dark text-light">
+    <!-- Background Animated Glow Orbs -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+    <canvas id="particlesCanvas" class="particles-canvas"></canvas>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('home_page') }}" class="brand-logo">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-gamepad"></i>
+                </div>
+                <span class="logo-text">Algo<span class="gradient-text">Play</span></span>
+                <span class="badge-beta">v2.0</span>
+            </a>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="nav-toggle" id="navToggle" aria-label="Menyu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- Nav Links -->
+            <div class="nav-menu" id="navMenu">
+                <ul class="nav-links">
+                    <li>
+                        <a href="{{ url_for('home_page') }}" class="nav-link {% if active_page == 'home' %}active{% endif %}">
+                            <i class="fa-solid fa-house"></i>
+                            <span>Bosh sahifa</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('learn_page') }}" class="nav-link {% if active_page == 'learn' %}active{% endif %}">
+                            <i class="fa-solid fa-book-bookmark"></i>
+                            <span>Dasturlash</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('games_page') }}" class="nav-link nav-link-games {% if active_page == 'games' %}active{% endif %}">
+                            <i class="fa-solid fa-dice-d20"></i>
+                            <span>O'yinlar</span>
+                            <span class="pulse-dot"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('auth_page') }}" class="nav-link {% if active_page == 'auth' %}active{% endif %}">
+                            <i class="fa-solid fa-user-astronaut"></i>
+                            <span>{% if current_user %}Mening Profilim{% else %}Kirish / Ro'yxat{% endif %}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('admin_dashboard') if current_admin else url_for('admin_login_page') }}" class="nav-link nav-link-admin {% if active_page == 'admin' %}active{% endif %}">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>Admin Panel</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- User Stats / Action Right -->
+                <div class="nav-right">
+                    <!-- Sound Toggle -->
+                    <button class="sound-toggle-btn" id="soundToggle" title="Ovozni yoqish/o'chirish">
+                        <i class="fa-solid fa-volume-high" id="soundIcon"></i>
+                    </button>
+
+                    {% if current_user %}
+                    <div class="user-chip">
+                        <div class="user-chip-avatar">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div class="user-chip-info">
+                            <span class="chip-username">{{ current_user.username }}</span>
+                            <div class="chip-stats">
+                                <span class="chip-level"><i class="fa-solid fa-bolt"></i> Lv.{{ current_user.level }}</span>
+                                <span class="chip-xp"><i class="fa-solid fa-star"></i> {{ current_user.xp }} XP</span>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('api_logout') }}" class="chip-logout" title="Chiqish">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                        </a>
+                    </div>
+                    {% elif current_admin %}
+                    <div class="admin-chip">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <span>Admin: {{ current_admin.username }}</span>
+                        <a href="{{ url_for('admin_logout') }}" class="chip-logout" title="Admin chiqish">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        </a>
+                    </div>
+                    {% else %}
+                    <a href="{{ url_for('auth_page') }}" class="btn btn-glow-primary nav-login-btn">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i> Kirish
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="flash-messages-container" id="flashContainer">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="flash-toast flash-{{ category }}">
+                    <i class="fa-solid {% if category == 'success' %}fa-circle-check{% elif category == 'danger' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %}"></i>
+                    <span>{{ message }}</span>
+                    <button class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col brand-col">
+                <div class="brand-logo footer-logo">
+                    <div class="logo-icon"><i class="fa-solid fa-gamepad"></i></div>
+                    <span class="logo-text">Algo<span class="gradient-text">Play</span></span>
+                </div>
+                <p class="footer-desc">
+                    Dasturlashni o'yinlar, interaktiv puzzlelar va qiziqarli testlar orqali o'rganishning eng samarali va zavqli platformasi.
+                </p>
+                <div class="footer-socials">
+                    <a href="#" class="social-link" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
+                    <a href="#" class="social-link" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="social-link" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#" class="social-link" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4 class="footer-heading">Sahifalar</h4>
+                <ul class="footer-links">
+                    <li><a href="{{ url_for('home_page') }}"><i class="fa-solid fa-angle-right"></i> Bosh sahifa</a></li>
+                    <li><a href="{{ url_for('learn_page') }}"><i class="fa-solid fa-angle-right"></i> Dasturlash darslari</a></li>
+                    <li><a href="{{ url_for('games_page') }}"><i class="fa-solid fa-angle-right"></i> Mini o'yinlar & Testlar</a></li>
+                    <li><a href="{{ url_for('auth_page') }}"><i class="fa-solid fa-angle-right"></i> Kirish / Ro'yxatdan o'tish</a></li>
+                    <li><a href="{{ url_for('admin_login_page') }}"><i class="fa-solid fa-angle-right"></i> Admin kirish</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4 class="footer-heading">O'yin Turlari</h4>
+                <ul class="footer-links">
+                    <li><a href="{{ url_for('games_page') }}#quiz-section"><i class="fa-solid fa-brain"></i> Quiz Arena (Testlar)</a></li>
+                    <li><a href="{{ url_for('games_page') }}#puzzle-section"><i class="fa-solid fa-puzzle-piece"></i> Kod Puzzle (Tartiblash)</a></li>
+                    <li><a href="{{ url_for('games_page') }}#bug-section"><i class="fa-solid fa-bug"></i> Bug Hunter (Xatoni top)</a></li>
+                    <li><a href="{{ url_for('games_page') }}#output-section"><i class="fa-solid fa-terminal"></i> Natijani Topish</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4 class="footer-heading">Aloqa & Qo'llab-quvvatlash</h4>
+                <p class="footer-contact"><i class="fa-solid fa-phone"></i> +998 (90) 123-45-67</p>
+                <p class="footer-contact"><i class="fa-solid fa-envelope"></i> support@algoplay.uz</p>
+                <p class="footer-contact"><i class="fa-solid fa-location-dot"></i> O'zbekiston, Toshkent</p>
+                <div class="admin-quick-link">
+                    <a href="{{ url_for('admin_login_page') }}" class="btn-sm btn-outline-admin">
+                        <i class="fa-solid fa-lock"></i> Xavfsiz Admin Portal
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 AlgoPlay. Barcha huquqlar himoyalangan. Dasturlashni o'yin orqali zabt eting!</p>
+        </div>
+    </footer>
+
+    <!-- Scroll To Top Floating Button -->
+    <button id="scrollTopBtn" class="scroll-top-btn" title="Yuqoriga chiqish" aria-label="Yuqoriga chiqish">
+        <i class="fa-solid fa-chevron-up"></i>
+    </button>
+
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

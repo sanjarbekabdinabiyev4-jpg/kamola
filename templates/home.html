@@ -1,0 +1,323 @@
+{% extends "base.html" %}
+
+{% block title %}AlgoPlay - O'yinlar Orqali Dasturlashni O'rganish{% endblock %}
+
+{% block content %}
+<!-- 1. HERO SECTION -->
+<section class="hero-section">
+    <div class="hero-content">
+        <div class="hero-badge">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>Interaktiv Ta'lim Platformasi</span>
+        </div>
+        <h1 class="hero-title">
+            Dasturlashni <br>
+            <span class="gradient-text">O'yinlar Orqali</span> O'rganing!
+        </h1>
+        <p class="hero-desc">
+            Zerikarli nazariyalarni unuting! <strong>AlgoPlay</strong> platformasida siz dasturlash asoslari, Python va algoritmlarni qiziqarli mini o'yinlar, kodli puzzlelar hamda interaktiv testlar orqali tez va oson o'rganasiz.
+        </p>
+
+        <div class="hero-actions">
+            <a href="{{ url_for('games_page') }}" class="btn btn-glow-primary">
+                <i class="fa-solid fa-gamepad"></i> O'yinni Boshlash
+            </a>
+            <a href="{{ url_for('learn_page') }}" class="btn btn-outline">
+                <i class="fa-solid fa-book-open-reader"></i> Darslarni Ko'rish
+            </a>
+            {% if not current_user %}
+            <a href="{{ url_for('auth_page') }}" class="btn btn-glow-purple">
+                <i class="fa-solid fa-user-plus"></i> Ro'yxatdan O'tish
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="hero-stats-row">
+            <div class="stat-item">
+                <span class="stat-number">4+</span>
+                <span class="stat-label">O'yin Turlari</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ stats.users_count }}+</span>
+                <span class="stat-label">Faol O'quvchilar</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ stats.questions_count }}+</span>
+                <span class="stat-label">Test & Topshiriqlar</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Bepul & Amaliy</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Interactive Mockup Card -->
+    <div class="hero-visual">
+        <div class="code-mockup-card">
+            <div class="mockup-header">
+                <div class="mockup-dots">
+                    <span class="dot dot-red"></span>
+                    <span class="dot dot-yellow"></span>
+                    <span class="dot dot-green"></span>
+                </div>
+                <span class="mockup-title">game_loop.py</span>
+            </div>
+            <div class="mockup-body">
+                <p><span class="code-comment"># AlgoPlay O'yin Muhiti</span></p>
+                <p><span class="code-keyword">import</span> <span class="code-func">algoplay</span></p>
+                <p>&nbsp;</p>
+                <p><span class="code-keyword">def</span> <span class="code-func">level_up</span>(user):</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;knowledge = user.solve_puzzle()</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">if</span> knowledge == <span class="code-str">"Mastered"</span>:</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;user.add_xp(<span class="code-num">+50</span>)</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">return</span> <span class="code-str">"Tabriklaymiz, siz yangi darajadasiz! 🚀"</span></p>
+                <p>&nbsp;</p>
+                <p><span class="code-func">print</span>(level_up(player))</p>
+            </div>
+        </div>
+
+        <!-- Floating Badges -->
+        <div class="floating-badge badge-top-right">
+            <i class="fa-solid fa-trophy" style="color: #fbbf24; font-size: 1.4rem;"></i>
+            <div>
+                <strong style="color: #fff; font-size: 0.88rem; display: block;">+150 XP</strong>
+                <span style="color: #94a3b8; font-size: 0.75rem;">Bug Hunter g'olibi</span>
+            </div>
+        </div>
+
+        <div class="floating-badge badge-bottom-left">
+            <i class="fa-brands fa-python" style="color: #00f2fe; font-size: 1.4rem;"></i>
+            <div>
+                <strong style="color: #fff; font-size: 0.88rem; display: block;">Python Asoslari</strong>
+                <span style="color: #94a3b8; font-size: 0.75rem;">Muvaffaqiyatli o'zlashtirildi</span>
+            </div>
+        </div>
+
+        <!-- Hero SVG Visual Illustration -->
+        <div style="margin-top: 24px; text-align: center;">
+            <img src="{{ url_for('static', filename='images/gaming_hero.svg') }}" alt="AlgoPlay Gaming Arena" style="width: 100%; max-width: 450px; border-radius: var(--radius-lg); border: 1px solid var(--border-glass); box-shadow: 0 15px 35px rgba(0,0,0,0.5);">
+        </div>
+    </div>
+</section>
+
+<!-- 2. NIMA UCHUN ALGOPLAY (FEATURES) -->
+<section class="features-section">
+    <div class="section-header">
+        <span class="section-tag">Afzalliklarimiz</span>
+        <h2 class="section-title">Nega Aynan <span class="gradient-text">AlgoPlay</span>?</h2>
+        <p class="section-subtitle">
+            Dasturlashni o'rganish hech qachon bunchalik qiziqarli va zavqli bo'lmagan. Biz ta'limni haqiqiy o'yinga aylantirdik!
+        </p>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon-box box-cyan">
+                <i class="fa-solid fa-puzzle-piece"></i>
+            </div>
+            <h3>Interaktiv Kod Puzzle</h3>
+            <p>
+                Aralashtirib tashlangan kod bloklarini to'g'ri mantiqiy ketma-ketlikda yig'ing va dasturlash mantig'ini chuqur tushuning.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon-box box-purple">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+            <h3>Mavzuli Test Savollari</h3>
+            <p>
+                3-sahifadagi darslarni o'qib, o'rgangan bilimlaringizni sinovdan o'tkazing va har bir to'g'ri javob uchun qimmatli XP to'plang.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon-box box-pink">
+                <i class="fa-solid fa-bug-slash"></i>
+            </div>
+            <h3>Bug Hunter (Xatoni Top)</h3>
+            <p>
+                Dasturchining eng muhim mahorati — xatolarni tez topishdir. Kod ichidagi sintaktik va mantiqiy xatolarni ovlang!
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon-box box-amber">
+                <i class="fa-solid fa-ranking-star"></i>
+            </div>
+            <h3>Peshqadamlar Jadvali</h3>
+            <p>
+                Boshqa o'quvchilar bilan raqobatlashing, o'z profilingiz darajasini oshiring va yetakchilar safidan joy oling!
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- 3. O'YINLAR SHOUKEYS SECTION -->
+<section class="games-preview-section">
+    <div class="section-header">
+        <span class="section-tag">O'yin Turlari</span>
+        <h2 class="section-title">Bizning <span class="gradient-text-purple">Mini O'yinlarimiz</span></h2>
+        <p class="section-subtitle">
+            Har bir o'yin sizning aniq dasturlash ko'nikmangizni shakllantirish uchun maxsus ishlab chiqilgan.
+        </p>
+    </div>
+
+    <div class="preview-grid">
+        <!-- Card 1 -->
+        <div class="game-preview-card">
+            <div class="game-card-banner" style="background: linear-gradient(135deg, #065f46, #047857);">
+                <i class="fa-solid fa-circle-question" style="color: #6ee7b7;"></i>
+            </div>
+            <div class="game-card-body">
+                <span class="game-card-tag">Bilim Sinovi</span>
+                <h3>Quiz Arena (Savol-Javob)</h3>
+                <p>Python, shartlar, sikllar va algoritmlar bo'yicha interaktiv testlar. Darhol tushuntirish beriladi.</p>
+                <a href="{{ url_for('games_page') }}#quiz" class="btn btn-outline btn-sm">
+                    <i class="fa-solid fa-play"></i> Testni Boshlash
+                </a>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="game-preview-card">
+            <div class="game-card-banner" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6);">
+                <i class="fa-solid fa-code" style="color: #93c5fd;"></i>
+            </div>
+            <div class="game-card-body">
+                <span class="game-card-tag">Mantiqiy Mashq</span>
+                <h3>Kod Puzzle (Bloklar)</h3>
+                <p>Bloklarni sichqoncha bilan siljitib, funksiya va sikllarni to'g'ri ketma-ketlikda birlashtiring.</p>
+                <a href="{{ url_for('games_page') }}#puzzle" class="btn btn-outline btn-sm">
+                    <i class="fa-solid fa-play"></i> Puzzle Yig'ish
+                </a>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="game-preview-card">
+            <div class="game-card-banner" style="background: linear-gradient(135deg, #701a75, #a21caf);">
+                <i class="fa-solid fa-bug" style="color: #f0abfc;"></i>
+            </div>
+            <div class="game-card-body">
+                <span class="game-card-tag">Diqqat & Tahlil</span>
+                <h3>Bug Hunter (Xatoni Qidir)</h3>
+                <p>Koddagi nozik kamchiliklarni aniqlang, ikki nuqta, qavslar va indeks xatolarini tuzating.</p>
+                <a href="{{ url_for('games_page') }}#bug" class="btn btn-outline btn-sm">
+                    <i class="fa-solid fa-play"></i> Xatolarni Topish
+                </a>
+            </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="game-preview-card">
+            <div class="game-card-banner" style="background: linear-gradient(135deg, #7c2d12, #c2410c);">
+                <i class="fa-solid fa-terminal" style="color: #fdba74;"></i>
+            </div>
+            <div class="game-card-body">
+                <span class="game-card-tag">Tezkor Natija</span>
+                <h3>Natijani Top (Output)</h3>
+                <p>Ushbu kod ekranga qanday natija chiqaradi? Kompyuterdan oldinroq natijani hisoblang!</p>
+                <a href="{{ url_for('games_page') }}#output" class="btn btn-outline btn-sm">
+                    <i class="fa-solid fa-play"></i> Bashorat Qilish
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 4. PESHQADAMLAR RO'YXATI (LEADERBOARD PREVIEW) -->
+<section class="features-section">
+    <div class="section-header">
+        <span class="section-tag">Eng Faol O'yinchilar</span>
+        <h2 class="section-title">Peshqadamlar <span class="gradient-text">Top 5</span></h2>
+        <p class="section-subtitle">
+            Eng ko'p o'yin o'ynab, eng yuqori XP to'plagan kuchli dasturchilar safiga qo'shiling!
+        </p>
+    </div>
+
+    <div class="leaderboard-table-container">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">O'rin</th>
+                    <th>Foydalanuvchi</th>
+                    <th>Daraja (Level)</th>
+                    <th>Jami XP</th>
+                    <th>Qo'shilgan Sana</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if leaderboard %}
+                    {% for u in leaderboard %}
+                    <tr class="leaderboard-row rank-{{ loop.index }}">
+                        <td>
+                            <span class="rank-badge {% if loop.index == 1 %}rank-1{% elif loop.index == 2 %}rank-2{% elif loop.index == 3 %}rank-3{% else %}rank-other{% endif %}">
+                                {% if loop.index == 1 %}👑 1{% elif loop.index == 2 %}🥈 2{% elif loop.index == 3 %}🥉 3{% else %}{{ loop.index }}{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 34px; height: 34px; border-radius: 50%; background: {% if loop.index == 1 %}linear-gradient(135deg, #fbbf24, #d97706){% elif loop.index == 2 %}linear-gradient(135deg, #cbd5e1, #64748b){% elif loop.index == 3 %}linear-gradient(135deg, #f59e0b, #78350f){% else %}rgba(255,255,255,0.08){% endif %}; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color: #000; font-weight: 800;">
+                                    {% if loop.index == 1 %}👑{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% else %}<i class="fa-solid fa-user-ninja" style="color: #94a3b8;"></i>{% endif %}
+                                </div>
+                                <div>
+                                    <strong style="color: #fff; font-size: 1.02rem; display: block;">{{ u.username }}</strong>
+                                    {% if loop.index == 1 %}
+                                    <span style="font-size: 0.72rem; color: #fbbf24; font-weight: 700;">★ Grandmaster</span>
+                                    {% elif loop.index == 2 %}
+                                    <span style="font-size: 0.72rem; color: #cbd5e1; font-weight: 700;">★ Master</span>
+                                    {% elif loop.index == 3 %}
+                                    <span style="font-size: 0.72rem; color: #f59e0b; font-weight: 700;">★ Expert</span>
+                                    {% else %}
+                                    <span style="font-size: 0.72rem; color: var(--text-muted);">Coder</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span style="color: var(--cyan); font-weight: 700;">
+                                <i class="fa-solid fa-bolt"></i> Daraja {{ u.level }}
+                            </span>
+                        </td>
+                        <td>
+                            <span style="color: var(--amber); font-weight: 800; font-family: var(--font-code);">
+                                <i class="fa-solid fa-star"></i> {{ u.xp }} XP
+                            </span>
+                        </td>
+                        <td style="color: var(--text-muted); font-size: 0.85rem;">
+                            {{ u.created_at[:10] }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 30px; color: var(--text-muted);">
+                            Hozircha o'yinchilar ro'yxati shakllanmoqda. Birinchi bo'lib ro'yxatdan o'ting!
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- 5. CTA SECTION -->
+<section class="cta-section">
+    <div class="cta-box">
+        <h2>Siz Ham Dasturlash Sayohatingizni Boshlang!</h2>
+        <p>
+            Har kuni 15 daqiqa AlgoPlay o'yinlarini o'ynash orqali siz mantiqiy fikrlashni kuchaytirasiz va dasturchilik kasbiga ilk mustahkam qadamingizni qo'yasiz.
+        </p>
+        <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+            <a href="{{ url_for('games_page') }}" class="btn btn-glow-primary">
+                <i class="fa-solid fa-rocket"></i> Hozir O'ynash
+            </a>
+            <a href="{{ url_for('auth_page') }}" class="btn btn-outline">
+                <i class="fa-solid fa-user-plus"></i> Yangi Hisob Yaratish
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

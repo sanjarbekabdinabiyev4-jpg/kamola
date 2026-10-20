@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Tizimiga Kirish - AlgoPlay{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-container" style="border-color: rgba(245, 158, 11, 0.4); box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.2);">
+        <div style="background: rgba(245, 158, 11, 0.1); border-bottom: 1px solid rgba(245, 158, 11, 0.2); padding: 24px; text-align: center;">
+            <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #000; display: inline-flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 12px; box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h2 style="font-size: 1.5rem; color: #fff;">Xavfsiz Admin Portali</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Faqat vakolatli ma'murlar uchun himoyalangan hudud</p>
+        </div>
+
+        <div class="auth-content">
+            <form action="{{ url_for('admin_login_page') }}" method="POST">
+                <div class="form-group">
+                    <label class="form-label" for="adminUsername">Admin Login</label>
+                    <div class="form-input-box">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <input type="text" name="username" id="adminUsername" class="form-input" placeholder="admin" required autofocus autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="adminPassword">Maxfiy Parol</label>
+                    <div class="form-input-box">
+                        <i class="fa-solid fa-key"></i>
+                        <input type="password" name="password" id="adminPassword" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+                    </div>
+                </div>
+
+                <div style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b; padding: 10px 14px; border-radius: 4px; font-size: 0.82rem; color: #fde68a; margin-bottom: 20px;">
+                    <i class="fa-solid fa-circle-info"></i> Boshlang'ich tizim kaliti: <strong>admin</strong> / <strong>admin777</strong>
+                </div>
+
+                <button type="submit" class="btn" style="width: 100%; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 700; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+                    <i class="fa-solid fa-lock-open"></i> Admin Panelga Kirish
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

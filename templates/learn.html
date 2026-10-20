@@ -1,0 +1,426 @@
+{% extends "base.html" %}
+
+{% block title %}Dasturlash Haqida Ma'lumotlar & Darslar - AlgoPlay{% endblock %}
+
+{% block content %}
+<div class="learn-container">
+    <!-- Header -->
+    <div class="learn-hero">
+        <span class="section-tag">Bilimlar Xazinasi</span>
+        <h1 class="section-title">Dasturlash Haqida <span class="gradient-text">Barcha Ma'lumotlar</span></h1>
+        <p class="section-subtitle">
+            Ushbu sahifadagi ma'lumotlarni diqqat bilan o'rganing! 4-sahifadagi Quiz va Mini O'yinlarda aynan shu darslardan savol-javoblar bo'ladi.
+        </p>
+    </div>
+
+    <!-- Quick Navigation Pills -->
+    <div class="learn-nav-pills">
+        <a href="#topic-python" class="learn-pill-btn active"><i class="fa-brands fa-python"></i> 1. Python Asoslari</a>
+        <a href="#topic-conditions" class="learn-pill-btn"><i class="fa-solid fa-code-branch"></i> 2. Shartlar (If/Else)</a>
+        <a href="#topic-loops" class="learn-pill-btn"><i class="fa-solid fa-rotate"></i> 3. Sikllar (Loops)</a>
+        <a href="#topic-functions" class="learn-pill-btn"><i class="fa-solid fa-cube"></i> 4. Funksiyalar</a>
+        <a href="#topic-ds" class="learn-pill-btn"><i class="fa-solid fa-layer-group"></i> 5. Ma'lumotlar Tuzilmasi</a>
+        <a href="#topic-algorithms" class="learn-pill-btn"><i class="fa-solid fa-diagram-project"></i> 6. Algoritmlar & Big-O</a>
+        <a href="#topic-web" class="learn-pill-btn"><i class="fa-solid fa-globe"></i> 7. Veb Dasturlash</a>
+        <a href="#topic-bugs" class="learn-pill-btn"><i class="fa-solid fa-bug-slash"></i> 8. Xatolarni Topish</a>
+    </div>
+
+    <!-- MAVZU 1: PYTHON ASOSLARI -->
+    <section id="topic-python" class="lesson-section">
+        <div class="lesson-card">
+            <div class="lesson-header">
+                <div class="lesson-title-box">
+                    <span class="lesson-badge-number">1</span>
+                    <div>
+                        <h2 class="lesson-title">Python Asoslari va Sintaksis</h2>
+                        <span style="color: var(--cyan); font-size: 0.85rem; font-weight: 600;">Dasturlashga Ilk Qadam</span>
+                    </div>
+                </div>
+                <span class="badge-beta"><i class="fa-solid fa-star"></i> 10-15 XP</span>
+            </div>
+
+            <div class="lesson-body">
+                <p>
+                    <strong>Python</strong> — o'rganish juda oson, sintaksisi toza va sodda bo'lgan dunyodagi eng ommabop dasturlash tillaridan biridir. U sun'iy intellekt, veb-dasturlash va ma'lumotlar tahlilida keng qo'llaniladi.
+                </p>
+
+                <h4 style="margin: 20px 0 10px; color: #fff;">1.1. Ma'lumotlarni ekranga chiqarish (print)</h4>
+                <p>Python tilida ekranga matn yoki o'zgaruvchi qiymatini chop etish uchun <code>print()</code> o'rnatilgan funksiyasidan foydalaniladi.</p>
+
+                <div class="code-block-container">
+                    <div class="code-block-header">
+                        <span><i class="fa-brands fa-python"></i> python_intro.py</span>
+                        <span>Python 3</span>
+                    </div>
+                    <pre class="code-pre"><code><span class="code-comment"># Salom Dunyo dasturi</span>
+<span class="code-func">print</span>(<span class="code-str">"Assalomu alaykum, AlgoPlay!"</span>)
+
+<span class="code-comment"># O'zgaruvchilar e'lon qilish</span>
+ism = <span class="code-str">"Kamola"</span>           <span class="code-comment"># Matn (str)</span>
+yosh = <span class="code-num">20</span>               <span class="code-comment"># Butun son (int)</span>
+narx = <span class="code-num">19.99</span>            <span class="code-comment"># Haqiqiy son (float)</span>
+talabami = <span class="code-keyword">True</span>         <span class="code-comment"># Mantiqiy qiymat (bool)</span>
+
+<span class="code-func">print</span>(ism, <span class="code-str">"yoshi:"</span>, yosh)</code></pre>
+                </div>
+
+                <div class="terminal-output-preview">
+                    Assalomu alaykum, AlgoPlay! &nbsp;|&nbsp; Kamola yoshi: 20
+                </div>
+
+                <h4 style="margin: 20px 0 10px; color: #fff;">1.2. Arifmetik operatorlar</h4>
+                <p>
+                    Pythonda asosiy amallar: <code>+</code> (qo'shish), <code>-</code> (ayirish), <code>*</code> (ko'paytirish), <code>/</code> (bo'lish).
+                    <br>
+                    <strong>Muhim eslatma:</strong> <code>**</code> operatori darajaga ko'tarishni bildiradi! Masalan, <code>5 ** 2 = 25</code>.
+                    <code>%</code> operatori esa qoldiqni topadi: <code>10 % 3 = 1</code>.
+                </p>
+
+                <div class="lesson-callout">
+                    <i class="fa-solid fa-lightbulb"></i> <strong>Eslab qoling:</strong> Testlarda <code>**</code> daraja operatori bo'yicha savol tushadi!
+                </div>
+            </div>
+
+            <div class="lesson-action-bar">
+                <span style="color: var(--text-muted); font-size: 0.9rem;">Mavzu o'zlashtirildimi?</span>
+                <a href="{{ url_for('games_page') }}#quiz" class="btn btn-glow-primary btn-sm">
+                    <i class="fa-solid fa-gamepad"></i> Ushbu Mavzudan Test Yechish
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAVZU 2: SHARTLAR (IF/ELSE) -->
+    <section id="topic-conditions" class="lesson-section">
+        <div class="lesson-card">
+            <div class="lesson-header">
+                <div class="lesson-title-box">
+                    <span class="lesson-badge-number">2</span>
+                    <div>
+                        <h2 class="lesson-title">Shart Operatori (if, elif, else)</h2>
+                        <span style="color: #c084fc; font-size: 0.85rem; font-weight: 600;">Mantiqiy Tanlovlar</span>
+                    </div>
+                </div>
+                <span class="badge-beta"><i class="fa-solid fa-star"></i> 15 XP</span>
+            </div>
+
+            <div class="lesson-body">
+                <p>
+                    Dastur ma'lum bir shart bajarilgandagina biror amalni bajarishi uchun <strong>if-elif-else</strong> tuzilmasidan foydalaniladi.
+                </p>
+
+                <div class="code-block-container">
+                    <div class="code-block-header">
+                        <span><i class="fa-brands fa-python"></i> conditions.py</span>
+                        <span>Python 3</span>
+                    </div>
+                    <pre class="code-pre"><code>ball = <span class="code-num">85</span>
+
+<span class="code-keyword">if</span> ball >= <span class="code-num">90</span>:
+    <span class="code-func">print</span>(<span class="code-str">"A'lo baho! Siz dasturlash dahosisiz 🏆"</span>)
+<span class="code-keyword">elif</span> ball >= <span class="code-num">70</span>:
+    <span class="code-func">print</span>(<span class="code-str">"Yaxshi natija! Mashq qilishda davom eting 🚀"</span>)
+<span class="code-keyword">else</span>:
+    <span class="code-func">print</span>(<span class="code-str">"Yana bir bor urinib ko'ring! 💪"</span>)</code></pre>
+                </div>
+
+                <div class="terminal-output-preview">
+                    Yaxshi natija! Mashq qilishda davom eting 🚀
+                </div>
+
+                <div class="lesson-callout tip">
+                    <i class="fa-solid fa-triangle-exclamation"></i> <strong>Diqqat (Sintaksis qoidasi):</strong> 
+                    <code>if</code> va <code>else</code> qatorlari oxirida doimo ikki nuqta (<code>:</code>) qo'yilishi shart, aks holda dasturda <code>SyntaxError</code> yuz beradi!
+                    Taqqoslash uchun esa ikki barobar (<code>==</code>) belgisi ishlatiladi. Yagona <code>=</code> belgisi faqat qiymat o'zlashtirish uchun.
+                </div>
+            </div>
+
+            <div class="lesson-action-bar">
+                <span style="color: var(--text-muted); font-size: 0.9rem;">Taqqoslash va shartlar bo'yicha mashq</span>
+                <a href="{{ url_for('games_page') }}#bug" class="btn btn-glow-purple btn-sm">
+                    <i class="fa-solid fa-bug"></i> Shartdagi Xatoni Qidirish
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAVZU 3: SIKLLAR (LOOPS) -->
+    <section id="topic-loops" class="lesson-section">
+        <div class="lesson-card">
+            <div class="lesson-header">
+                <div class="lesson-title-box">
+                    <span class="lesson-badge-number">3</span>
+                    <div>
+                        <h2 class="lesson-title">Sikllar (for va while)</h2>
+                        <span style="color: #6ee7b7; font-size: 0.85rem; font-weight: 600;">Takroriy Harakatlar</span>
+                    </div>
+                </div>
+                <span class="badge-beta"><i class="fa-solid fa-star"></i> 20 XP</span>
+            </div>
+
+            <div class="lesson-body">
+                <p>
+                    Bir xil amalni ko'p marta takrorlash uchun sikllar ishlatiladi.
+                </p>
+                <ul>
+                    <li><strong>for sikli:</strong> Ro'yxat yoki <code>range()</code> diapazonidagi elementlarni birma-bir aylanib chiqish uchun qulay.</li>
+                    <li><strong>while sikli:</strong> Shart toki <code>True</code> (to'g'ri) bo'lib turgunicha uzluksiz takrorlanadi.</li>
+                </ul>
+
+                <div class="code-block-container">
+                    <div class="code-block-header">
+                        <span><i class="fa-brands fa-python"></i> loops.py</span>
+                        <span>Python 3</span>
+                    </div>
+                    <pre class="code-pre"><code><span class="code-comment"># 1 dan 5 gacha sonlarni chiqarish (range(1, 6) 1 dan 5 gacha ishlaydi, 6 kirmaydi)</span>
+<span class="code-keyword">for</span> son <span class="code-keyword">in</span> <span class="code-func">range</span>(<span class="code-num">1</span>, <span class="code-num">6</span>):
+    <span class="code-func">print</span>(<span class="code-str">"Son:"</span>, son)
+
+<span class="code-comment"># While sikli</span>
+urinish = <span class="code-num">3</span>
+<span class="code-keyword">while</span> urinish > <span class="code-num">0</span>:
+    <span class="code-func">print</span>(<span class="code-str">"Qolgan imkoniyat:"</span>, urinish)
+    urinish -= <span class="code-num">1</span></code></pre>
+                </div>
+
+                <div class="terminal-output-preview">
+                    Son: 1 ... Son: 5 &nbsp;|&nbsp; Qolgan imkoniyat: 3, 2, 1
+                </div>
+            </div>
+
+            <div class="lesson-action-bar">
+                <span style="color: var(--text-muted); font-size: 0.9rem;">Siklni to'g'ri yig'a olasizmi?</span>
+                <a href="{{ url_for('games_page') }}#puzzle" class="btn btn-glow-primary btn-sm">
+                    <i class="fa-solid fa-puzzle-piece"></i> Sikl Puzzleni Yechish
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAVZU 4: FUNKSIYALAR -->
+    <section id="topic-functions" class="lesson-section">
+        <div class="lesson-card">
+            <div class="lesson-header">
+                <div class="lesson-title-box">
+                    <span class="lesson-badge-number">4</span>
+                    <div>
+                        <h2 class="lesson-title">Funksiyalar (Functions)</h2>
+                        <span style="color: #fdba74; font-size: 0.85rem; font-weight: 600;">Kodni Qayta Ishlatish</span>
+                    </div>
+                </div>
+                <span class="badge-beta"><i class="fa-solid fa-star"></i> 20 XP</span>
+            </div>
+
+            <div class="lesson-body">
+                <p>
+                    Funksiya — ma'lum bir vazifani bajaruvchi mustaqil kod blokidir. U bir marta yoziladi va dastur davomida istalgancha chaqirib ishlatiladi.
+                </p>
+                <p>
+                    Funksiya <code>def</code> kalit so'zi bilan e'lon qilinadi va natijani qaytarish uchun <code>return</code> buyrug'i ishlatiladi.
+                </p>
+
+                <div class="code-block-container">
+                    <div class="code-block-header">
+                        <span><i class="fa-brands fa-python"></i> functions.py</span>
+                        <span>Python 3</span>
+                    </div>
+                    <pre class="code-pre"><code><span class="code-keyword">def</span> <span class="code-func">ikkita_son_yigindisi</span>(a, b):
+    natija = a + b
+    <span class="code-keyword">return</span> natija
+
+<span class="code-comment"># Funksiyani chaqirish</span>
+javob = <span class="code-func">ikkita_son_yigindisi</span>(<span class="code-num">15</span>, <span class="code-num">25</span>)
+<span class="code-func">print</span>(<span class="code-str">"Yig'indi:"</span>, javob)  <span class="code-comment"># Natija: 40</span></code></pre>
+                </div>
+
+                <div class="terminal-output-preview">
+                    Yig'indi: 40
+                </div>
+            </div>
+
+            <div class="lesson-action-bar">
+                <span style="color: var(--text-muted); font-size: 0.9rem;">Funksiya tuzilishini mustahkamlash</span>
+                <a href="{{ url_for('games_page') }}#puzzle" class="btn btn-glow-purple btn-sm">
+                    <i class="fa-solid fa-puzzle-piece"></i> Funksiya Puzzleni Yig'ish
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAVZU 5: MA'LUMOTLAR TUZILMALARI -->
+    <section id="topic-ds" class="lesson-section">
+        <div class="lesson-card">
+            <div class="lesson-header">
+                <div class="lesson-title-box">
+                    <span class="lesson-badge-number">5</span>
+                    <div>
+                        <h2 class="lesson-title">Ma'lumotlar Tuzilmasi (Data Structures)</h2>
+                        <span style="color: #67e8f9; font-size: 0.85rem; font-weight: 600;">List, Tuple, Dict, Stack & Queue</span>
+                    </div>
+                </div>
+                <span class="badge-beta"><i class="fa-solid fa-star"></i> 25 XP</span>
+            </div>
+
+            <div class="lesson-body">
+                <p>
+                    Ma'lumotlar tuzilmalari — kompyuter xotirasida axborotlarni tartibli va qulay saqlash usullaridir.
+                </p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 24px 0;">
+                    <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
+                        <h4 style="color: var(--cyan);"><i class="fa-solid fa-list-ol"></i> Ro'yxat (List)</h4>
+                        <p style="font-size: 0.9rem; margin-top: 8px;">
+                            Elementlar tartiblangan, o'zgaruvchan (mutable). Indekslar <strong>0 dan</strong> boshlanadi! Uzunligini bilish uchun <code>len()</code> funksiyasi ishlatiladi.
+                        </p>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
+                        <h4 style="color: #c084fc;"><i class="fa-solid fa-lock"></i> Kortej (Tuple)</h4>
+                        <p style="font-size: 0.9rem; margin-top: 8px;">
+                            Yaratilgach uning elementlarini <strong>o'zgartirib bo'lmaydi (immutable)</strong>. Oddiy qavslar <code>()</code> bilan yoziladi.
+                        </p>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
+                        <h4 style="color: var(--amber);"><i class="fa-solid fa-layer-group"></i> Stek (Stack)</h4>
+                        <p style="font-size: 0.9rem; margin-top: 8px;">
+                            <strong>LIFO (Last In First Out)</strong> tamoyili: oxirgi kirgan element birinchi bo'lib olinadi. Likopchalar taxlamiga o'xshaydi.
+                        </p>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
+                        <h4 style="color: var(--green);"><i class="fa-solid fa-people-line"></i> Navbat (Queue)</h4>
+                        <p style="font-size: 0.9rem; margin-top: 8px;">
+                            <strong>FIFO (First In First Out)</strong> tamoyili: birinchi navbatga turgan odam birinchi xizmat oladi va chiqadi.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="lesson-callout">
+                    <i class="fa-solid fa-bell"></i> <strong>Test Savoli:</strong> LIFO (Oxirgi kirgan - birinchi chiqadi) tamoyilida qaysi tuzilma ishlaydi? Javob: <strong>Stek (Stack)</strong>!
+                </div>
+            </div>
+
+            <div class="lesson-action-bar">
+                <span style="color: var(--text-muted); font-size: 0.9rem;">Tuzilmalar bo'yicha savollarga tayyormisiz?</span>
+                <a href="{{ url_for('games_page') }}#quiz" class="btn btn-glow-primary btn-sm">
+                    <i class="fa-solid fa-gamepad"></i> Test Savolini Yechish
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAVZU 6: ALGORITMLAR & BIG O -->
+    <section id="topic-algorithms" class="lesson-section">
+        <div class="lesson-card">
+            <div class="lesson-header">
+                <div class="lesson-title-box">
+                    <span class="lesson-badge-number">6</span>
+                    <div>
+                        <h2 class="lesson-title">Algoritmlar Asoslari & Big-O Murakkablik</h2>
+                        <span style="color: #f43f5e; font-size: 0.85rem; font-weight: 600;">Tezlik va Samaradorlik</span>
+                    </div>
+                </div>
+                <span class="badge-beta"><i class="fa-solid fa-star"></i> 30 XP</span>
+            </div>
+
+            <div class="lesson-body">
+                <p>
+                    <strong>Algoritm</strong> — muayyan vazifani bosqichma-bosqich hal qilish uchun tuzilgan aniq ko'rsatmalar ketma-ketligi.
+                </p>
+
+                <h4 style="margin: 20px 0 10px; color: #fff;">6.1. Ikkilik Qidiruv (Binary Search)</h4>
+                <p>
+                    Saralangan (o'sish tartibidagi) ro'yxatdan element qidirishning eng samarali usuli. Har bir qadamda qidiruv sohasini yarmiga qisqartiradi.
+                    Uning vaqt murakkabligi: <strong>O(log n)</strong> ga teng!
+                </p>
+
+                <h4 style="margin: 20px 0 10px; color: #fff;">6.2. Saralash Algoritmlari</h4>
+                <ul>
+                    <li><strong>Bubble Sort (Pufaksimon):</strong> Qo'shni elementlarni solishtirib o'rnini almashtiradi. Murakkabligi: <code>O(n^2)</code>.</li>
+                    <li><strong>Merge Sort (Birlashtirish):</strong> "Bo'lib tashla va hukmronlik qil" (Divide & Conquer) usulidan foydalanadi. Murakkabligi: <code>O(n log n)</code>.</li>
+                </ul>
+
+                <div class="lesson-callout tip">
+                    <i class="fa-solid fa-brain"></i> <strong>Esda saqlang:</strong> Binary Search murakkabligi <code>O(log n)</code>, Merge Sort esa bo'lib tashla usulida ishlaydi!
+                </div>
+            </div>
+
+            <div class="lesson-action-bar">
+                <span style="color: var(--text-muted); font-size: 0.9rem;">Algoritmlar sinovi</span>
+                <a href="{{ url_for('games_page') }}#quiz" class="btn btn-glow-purple btn-sm">
+                    <i class="fa-solid fa-brain"></i> Algoritm Testini Yechish
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAVZU 7: VEB DASTURLASH -->
+    <section id="topic-web" class="lesson-section">
+        <div class="lesson-card">
+            <div class="lesson-header">
+                <div class="lesson-title-box">
+                    <span class="lesson-badge-number">7</span>
+                    <div>
+                        <h2 class="lesson-title">Veb Dasturlash Asoslari</h2>
+                        <span style="color: var(--cyan); font-size: 0.85rem; font-weight: 600;">HTML, CSS, JavaScript, Backend</span>
+                    </div>
+                </div>
+                <span class="badge-beta"><i class="fa-solid fa-star"></i> 15 XP</span>
+            </div>
+
+            <div class="lesson-body">
+                <p>
+                    Har qanday zamonaviy sayt 3 ta asosiy texnologiyadan tashkil topadi:
+                </p>
+                <ul>
+                    <li><strong>HTML (HyperText Markup Language):</strong> Veb-sahifaning suyagi, skleti va mazmuni (matnlar, tugmalar, rasmlar).</li>
+                    <li><strong>CSS (Cascading Style Sheets):</strong> Saytning chiroyi, ranglari, shriftlari va dizayni.</li>
+                    <li><strong>JavaScript:</strong> Saytning harakati, o'yinlari, animatsiyalari va interaktivligi.</li>
+                    <li><strong>Backend (Python / Flask / Django):</strong> Foydalanuvchi ma'lumotlarini saqlash, xavfsizlik va server mantiqi.</li>
+                </ul>
+            </div>
+
+            <div class="lesson-action-bar">
+                <span style="color: var(--text-muted); font-size: 0.9rem;">Veb bo'yicha savollarga o'tish</span>
+                <a href="{{ url_for('games_page') }}#quiz" class="btn btn-glow-primary btn-sm">
+                    <i class="fa-solid fa-play"></i> Test Yechish
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAVZU 8: XATOLARNI TOPISH -->
+    <section id="topic-bugs" class="lesson-section">
+        <div class="lesson-card">
+            <div class="lesson-header">
+                <div class="lesson-title-box">
+                    <span class="lesson-badge-number">8</span>
+                    <div>
+                        <h2 class="lesson-title">Dasturdagi Xatoliklar (Bugs) va Ularni Tuzatish</h2>
+                        <span style="color: #ef4444; font-size: 0.85rem; font-weight: 600;">Bug Hunting & Debugging</span>
+                    </div>
+                </div>
+                <span class="badge-beta"><i class="fa-solid fa-star"></i> 25 XP</span>
+            </div>
+
+            <div class="lesson-body">
+                <p>
+                    Dasturchining 70% vaqti xatolarni qidirish va to'g'rilash (debugging) bilan o'tadi. Eng keng tarqalgan xatolar:
+                </p>
+                <ul>
+                    <li><strong>SyntaxError:</strong> Imlo xatosi (ikki nuqta <code>:</code> qolib ketishi, yopilmagan qavslar).</li>
+                    <li><strong>IndexError:</strong> Mavjud bo'lmagan indeksga murojaat qilish (masalan, 3 ta elementli ro'yxatdan 3-indeksni so'rash, chunki indekslar 0, 1, 2 bo'ladi).</li>
+                    <li><strong>TypeError:</strong> Mos kelmaydigan turlarni biriktirish (masalan, son bilan matnni to'g'ridan to'g'ri qo'shish: <code>5 + "olma"</code>).</li>
+                </ul>
+            </div>
+
+            <div class="lesson-action-bar">
+                <span style="color: var(--text-muted); font-size: 0.9rem;">Haqiqiy xatolarni ovlashga tayyormisiz?</span>
+                <a href="{{ url_for('games_page') }}#bug" class="btn btn-glow-purple btn-sm">
+                    <i class="fa-solid fa-bug"></i> Bug Hunter O'yinini O'ynash
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

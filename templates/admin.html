@@ -1,0 +1,503 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Boshqaruv Paneli - AlgoPlay{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <!-- Topbar -->
+    <div class="admin-topbar">
+        <div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="width: 12px; height: 12px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981;"></span>
+                <span style="color: #fbbf24; font-weight: 700; text-transform: uppercase; font-size: 0.85rem;">AlgoPlay Boshqaruv Tizimi</span>
+            </div>
+            <h1 style="font-size: 2.2rem; margin-top: 6px;">
+                Salom, <span class="gradient-text">{{ current_admin.full_name }}</span>!
+            </h1>
+            <p style="color: var(--text-muted); font-size: 0.92rem;">
+                Tizim administratori: <strong>@{{ current_admin.username }}</strong>
+            </p>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+            <a href="{{ url_for('admin_logout') }}" class="btn btn-danger btn-sm">
+                <i class="fa-solid fa-power-off"></i> Chiqish
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="admin-stats-grid">
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon" style="background: rgba(0, 242, 254, 0.15); color: var(--cyan);">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <div class="admin-stat-info">
+                <h4>Foydalanuvchilar</h4>
+                <div class="num">{{ stats.total_users }}</div>
+            </div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon" style="background: rgba(251, 191, 36, 0.15); color: var(--amber);">
+                <i class="fa-solid fa-star"></i>
+            </div>
+            <div class="admin-stat-info">
+                <h4>Jami Berilgan XP</h4>
+                <div class="num">{{ stats.total_xp }}</div>
+            </div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon" style="background: rgba(121, 40, 202, 0.15); color: #c084fc;">
+                <i class="fa-solid fa-gamepad"></i>
+            </div>
+            <div class="admin-stat-info">
+                <h4>O'ynalgan O'yinlar</h4>
+                <div class="num">{{ stats.total_games }}</div>
+            </div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--green);">
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+            <div class="admin-stat-info">
+                <h4>Test Savollari</h4>
+                <div class="num">{{ stats.total_questions }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="admin-tabs">
+        <button class="admin-tab-btn active" id="tabUsersBtn" onclick="switchAdminTab('users')">
+            <i class="fa-solid fa-users-gear"></i> Foydalanuvchilar ({{ users|length }})
+        </button>
+        <button class="admin-tab-btn" id="tabQuestionsBtn" onclick="switchAdminTab('questions')">
+            <i class="fa-solid fa-file-circle-question"></i> Test Savollari ({{ questions|length }})
+        </button>
+        <button class="admin-tab-btn" id="tabPuzzlesBtn" onclick="switchAdminTab('puzzles')">
+            <i class="fa-solid fa-puzzle-piece"></i> Kod Puzzlelar ({{ puzzles|length }})
+        </button>
+        <button class="admin-tab-btn" id="tabLogsBtn" onclick="switchAdminTab('logs')">
+            <i class="fa-solid fa-clock-rotate-left"></i> O'yinlar Tarixi ({{ stats.recent_games|length }})
+        </button>
+    </div>
+
+    <!-- 1. FOYDALANUVCHILAR BO'LIMI -->
+    <div id="adminSectionUsers" class="admin-section-card">
+        <div class="admin-card-header">
+            <h3><i class="fa-solid fa-users"></i> Ro'yxatdan O'tgan Foydalanuvchilar</h3>
+            <span style="color: var(--text-muted); font-size: 0.88rem;">Jami: {{ users|length }} ta</span>
+        </div>
+
+        <div class="leaderboard-table-container">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Telefon Raqami</th>
+                        <th>Daraja</th>
+                        <th>XP Ball</th>
+                        <th>O'ynagan O'yinlari</th>
+                        <th>Ro'yxatdan O'tgan</th>
+                        <th>Amallar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr id="userRow{{ u.id }}">
+                        <td><strong>#{{ u.id }}</strong></td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-user-astronaut" style="color: var(--cyan);"></i>
+                                <strong>{{ u.username }}</strong>
+                            </div>
+                        </td>
+                        <td>{{ u.phone }}</td>
+                        <td><span style="color: var(--cyan); font-weight: 700;">Lv.{{ u.level }}</span></td>
+                        <td><span style="color: var(--amber); font-weight: 700;">{{ u.xp }} XP</span></td>
+                        <td>{{ u.games_played }} ta</td>
+                        <td style="color: var(--text-muted); font-size: 0.85rem;">{{ u.created_at[:10] }}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteUser({{ u.id }}, '{{ u.username }}')">
+                                <i class="fa-solid fa-trash-can"></i> O'chirish
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not users %}
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 25px; color: var(--text-muted);">
+                            Hozircha foydalanuvchilar mavjud emas.
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 2. SAVOLLAR BO'LIMI -->
+    <div id="adminSectionQuestions" class="admin-section-card" style="display: none;">
+        <div class="admin-card-header">
+            <h3><i class="fa-solid fa-plus-circle"></i> Yangi Test Savoli Qo'shish</h3>
+        </div>
+
+        <!-- Add Question Form -->
+        <form onsubmit="handleCreateQuestion(event)" style="margin-bottom: 40px; background: rgba(255,255,255,0.02); padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Kategoriya</label>
+                    <select id="newQCategory" class="form-input" style="padding-left: 16px;">
+                        <option value="python">Python Asoslari</option>
+                        <option value="algorithms">Algoritmlar</option>
+                        <option value="data_structures">Ma'lumotlar Tuzilmasi</option>
+                        <option value="web">Veb Dasturlash</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mukofot Ball (XP)</label>
+                    <input type="number" id="newQPoints" class="form-input" style="padding-left: 16px;" value="15" min="5" max="50">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Savol Matni</label>
+                <input type="text" id="newQText" class="form-input" style="padding-left: 16px;" placeholder="Masalan: Python'da ro'yxat uzunligini qaysi funksiya aniqlaydi?" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Kod Namunasi (Ixtiyoriy)</label>
+                <textarea id="newQCode" class="form-input" style="padding-left: 16px; min-height: 80px; font-family: var(--font-code);" placeholder="x = 5&#10;print(x ** 2)"></textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label class="form-label">Variant A</label>
+                    <input type="text" id="newQOptA" class="form-input" style="padding-left: 16px;" required placeholder="A varianti">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Variant B</label>
+                    <input type="text" id="newQOptB" class="form-input" style="padding-left: 16px;" required placeholder="B varianti">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Variant C</label>
+                    <input type="text" id="newQOptC" class="form-input" style="padding-left: 16px;" required placeholder="C varianti">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Variant D</label>
+                    <input type="text" id="newQOptD" class="form-input" style="padding-left: 16px;" required placeholder="D varianti">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">To'g'ri Javob</label>
+                    <select id="newQCorrect" class="form-input" style="padding-left: 16px;">
+                        <option value="A">Variant A</option>
+                        <option value="B">Variant B</option>
+                        <option value="C">Variant C</option>
+                        <option value="D">Variant D</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tushuntirish Matni</label>
+                    <input type="text" id="newQExpl" class="form-input" style="padding-left: 16px;" placeholder="To'g'ri javob sababi (foydalanuvchiga ko'rsatiladi)">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-glow-primary">
+                <i class="fa-solid fa-plus"></i> Savolni Bazaga Qo'shish
+            </button>
+        </form>
+
+        <div class="admin-card-header">
+            <h3>Mavjud Barcha Savollar</h3>
+        </div>
+
+        <div class="leaderboard-table-container">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Kategoriya</th>
+                        <th>Savol</th>
+                        <th>To'g'ri</th>
+                        <th>XP</th>
+                        <th>Amal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for q in questions %}
+                    <tr id="qRow{{ q.id }}">
+                        <td><strong>#{{ q.id }}</strong></td>
+                        <td><span class="badge-beta">{{ q.category }}</span></td>
+                        <td>{{ q.question }}</td>
+                        <td><strong style="color: var(--green);">{{ q.correct_option }}</strong></td>
+                        <td><span style="color: var(--amber);">{{ q.points }} XP</span></td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteQuestion({{ q.id }})">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 3. PUZZLELAR BO'LIMI -->
+    <div id="adminSectionPuzzles" class="admin-section-card" style="display: none;">
+        <div class="admin-card-header">
+            <h3><i class="fa-solid fa-puzzle-piece"></i> Yangi Kod Puzzle Qo'shish</h3>
+        </div>
+
+        <form onsubmit="handleCreatePuzzle(event)" style="margin-bottom: 40px; background: rgba(255,255,255,0.02); padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
+            <div class="form-group">
+                <label class="form-label">Puzzle Sarlavhasi</label>
+                <input type="text" id="newPTitle" class="form-input" style="padding-left: 16px;" placeholder="Masalan: Juft sonlarni chiqarish" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Tavsif (Topshiriq sharti)</label>
+                <input type="text" id="newPDesc" class="form-input" style="padding-left: 16px;" placeholder="Kod bloklarini to'g'ri tartibda joylashtiring..." required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Kod Qatorlari (To'g'ri tartibda, har bir qator alohida satrda)</label>
+                <textarea id="newPLines" class="form-input" style="padding-left: 16px; min-height: 120px; font-family: var(--font-code);" placeholder="for i in range(10):&#10;    if i % 2 == 0:&#10;        print(i)" required></textarea>
+                <span class="form-hint">Dastur ushbu qatorlarni avtomatik aralashtirib foydalanuvchiga taqdim etadi.</span>
+            </div>
+            <div class="form-group" style="max-width: 200px;">
+                <label class="form-label">Mukofot XP</label>
+                <input type="number" id="newPPoints" class="form-input" style="padding-left: 16px;" value="25">
+            </div>
+
+            <button type="submit" class="btn btn-glow-purple">
+                <i class="fa-solid fa-plus"></i> Yangi Puzzleni Saqlash
+            </button>
+        </form>
+
+        <div class="admin-card-header">
+            <h3>Mavjud Barcha Kod Puzzlelar</h3>
+        </div>
+
+        <div class="leaderboard-table-container">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sarlavha</th>
+                        <th>Tavsif</th>
+                        <th>XP</th>
+                        <th>Amal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in puzzles %}
+                    <tr id="pRow{{ p.id }}">
+                        <td><strong>#{{ p.id }}</strong></td>
+                        <td><strong>{{ p.title }}</strong></td>
+                        <td style="color: var(--text-secondary);">{{ p.description }}</td>
+                        <td><span style="color: var(--amber);">{{ p.points }} XP</span></td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deletePuzzle({{ p.id }})">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 4. O'YINLAR TARIXI -->
+    <div id="adminSectionLogs" class="admin-section-card" style="display: none;">
+        <div class="admin-card-header">
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> Eng So'nggi O'yin Faolligi</h3>
+        </div>
+
+        <div class="leaderboard-table-container">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Foydalanuvchi</th>
+                        <th>O'yin Turi</th>
+                        <th>To'plagan Bali</th>
+                        <th>Olingan XP</th>
+                        <th>Vaqt</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for g in stats.recent_games %}
+                    <tr>
+                        <td>#{{ g.id }}</td>
+                        <td><strong style="color: #fff;">{{ g.username }}</strong></td>
+                        <td><span class="badge-beta">{{ g.game_type }}</span></td>
+                        <td>{{ g.score }}</td>
+                        <td><span style="color: var(--green); font-weight: 700;">+{{ g.xp_earned }} XP</span></td>
+                        <td style="color: var(--text-muted); font-size: 0.85rem;">{{ g.played_at }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% if not stats.recent_games %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 25px; color: var(--text-muted);">
+                            Hozircha o'yinlar tarixi bo'sh.
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function switchAdminTab(tab) {
+    sfx.click();
+    const tabs = ['users', 'questions', 'puzzles', 'logs'];
+    tabs.forEach(t => {
+        const btn = document.getElementById(`tab${capitalize(t)}Btn`);
+        const sec = document.getElementById(`adminSection${capitalize(t)}`);
+        if (btn) btn.classList.remove('active');
+        if (sec) sec.style.display = 'none';
+    });
+
+    const activeBtn = document.getElementById(`tab${capitalize(tab)}Btn`);
+    const activeSec = document.getElementById(`adminSection${capitalize(tab)}`);
+    if (activeBtn) activeBtn.classList.add('active');
+    if (activeSec) activeSec.style.display = 'block';
+}
+
+function capitalize(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+// Delete user
+async function deleteUser(userId, username) {
+    if (!confirm(`Haqiqatan ham '${username}' foydalanuvchisini o'chirmoqchimisiz?`)) return;
+    sfx.click();
+    try {
+        const res = await fetch(`/api/admin/users/delete/${userId}`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            sfx.correct();
+            showToast(data.message, "success");
+            const row = document.getElementById(`userRow${userId}`);
+            if (row) row.remove();
+        } else {
+            showToast(data.message, "danger");
+        }
+    } catch (e) {
+        showToast("Xatolik yuz berdi!", "danger");
+    }
+}
+
+// Add question
+async function handleCreateQuestion(e) {
+    e.preventDefault();
+    sfx.click();
+    const payload = {
+        category: document.getElementById("newQCategory").value,
+        points: parseInt(document.getElementById("newQPoints").value) || 15,
+        question: document.getElementById("newQText").value.trim(),
+        code_snippet: document.getElementById("newQCode").value.trim(),
+        option_a: document.getElementById("newQOptA").value.trim(),
+        option_b: document.getElementById("newQOptB").value.trim(),
+        option_c: document.getElementById("newQOptC").value.trim(),
+        option_d: document.getElementById("newQOptD").value.trim(),
+        correct_option: document.getElementById("newQCorrect").value,
+        explanation: document.getElementById("newQExpl").value.trim()
+    };
+
+    try {
+        const res = await fetch("/api/admin/questions/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+            sfx.levelUp();
+            showToast(data.message, "success");
+            setTimeout(() => window.location.reload(), 800);
+        } else {
+            showToast(data.message, "danger");
+        }
+    } catch (e) {
+        showToast("Savol qo'shishda xatolik!", "danger");
+    }
+}
+
+// Delete question
+async function deleteQuestion(qId) {
+    if (!confirm("Ushbu savolni o'chirmoqchimisiz?")) return;
+    sfx.click();
+    try {
+        const res = await fetch(`/api/admin/questions/delete/${qId}`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            showToast(data.message, "success");
+            const row = document.getElementById(`qRow${qId}`);
+            if (row) row.remove();
+        }
+    } catch (e) {
+        showToast("O'chirishda xatolik!", "danger");
+    }
+}
+
+// Add puzzle
+async function handleCreatePuzzle(e) {
+    e.preventDefault();
+    sfx.click();
+    const linesRaw = document.getElementById("newPLines").value.split("\n").filter(l => l.trim() !== "");
+    const payload = {
+        title: document.getElementById("newPTitle").value.trim(),
+        description: document.getElementById("newPDesc").value.trim(),
+        lines: linesRaw,
+        points: parseInt(document.getElementById("newPPoints").value) || 25
+    };
+
+    try {
+        const res = await fetch("/api/admin/puzzles/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+            sfx.levelUp();
+            showToast(data.message, "success");
+            setTimeout(() => window.location.reload(), 800);
+        } else {
+            showToast(data.message, "danger");
+        }
+    } catch (e) {
+        showToast("Puzzle qo'shishda xatolik!", "danger");
+    }
+}
+
+// Delete puzzle
+async function deletePuzzle(pId) {
+    if (!confirm("Ushbu puzzleni o'chirmoqchimisiz?")) return;
+    sfx.click();
+    try {
+        const res = await fetch(`/api/admin/puzzles/delete/${pId}`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            showToast(data.message, "success");
+            const row = document.getElementById(`pRow${pId}`);
+            if (row) row.remove();
+        }
+    } catch (e) {
+        showToast("O'chirishda xatolik!", "danger");
+    }
+}
+</script>
+{% endblock %}

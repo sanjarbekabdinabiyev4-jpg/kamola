@@ -1,0 +1,19 @@
+{
+  "name": "algoplay",
+  "version": "2.0.0",
+  "description": "AlgoPlay - Dasturlashni o'yinlar orqali o'rganish platformasi",
+  "main": "app.py",
+  "scripts": {
+    "start": "py app.py",
+    "dev": "py app.py",
+    "test": "py test_app.py"
+  },
+  "keywords": [
+    "python",
+    "flask",
+    "gamified-learning",
+    "algoplay"
+  ],
+  "author": "AlgoPlay Team",
+  "license": "MIT"
+}
