@@ -1,12 +1,49 @@
 import sqlite3
 import os
+import shutil
 import hashlib
 import json
 
-DB_FILE = os.path.join(os.path.dirname(__file__), "algoplay.db")
+SOURCE_DB = os.path.join(os.path.dirname(__file__), "algoplay.db")
+
+def get_writable_db_path():
+    # Vercel yoki serverless yoki read-only fayl tizimini aniqlash
+    is_serverless = bool(
+        os.environ.get("VERCEL") or 
+        os.environ.get("AWS_LAMBDA_FUNCTION_NAME") or 
+        os.environ.get("NOW_REGION") or
+        not os.access(os.path.dirname(SOURCE_DB) or ".", os.W_OK)
+    )
+    
+    if is_serverless:
+        tmp_dir = "/tmp" if os.path.exists("/tmp") else os.environ.get("TEMP", ".")
+        target_db = os.path.join(tmp_dir, "algoplay.db")
+        if not os.path.exists(target_db) and os.path.exists(SOURCE_DB):
+            try:
+                shutil.copyfile(SOURCE_DB, target_db)
+                try:
+                    os.chmod(target_db, 0o666)
+                except Exception:
+                    pass
+            except Exception:
+                pass
+        return target_db
+    return SOURCE_DB
+
+DB_FILE = get_writable_db_path()
 
 def get_db():
-    conn = sqlite3.connect(DB_FILE)
+    db_path = get_writable_db_path()
+    try:
+        conn = sqlite3.connect(db_path, timeout=15)
+    except Exception:
+        tmp_db = os.path.join("/tmp" if os.path.exists("/tmp") else os.environ.get("TEMP", "."), "algoplay.db")
+        if not os.path.exists(tmp_db) and os.path.exists(SOURCE_DB):
+            try:
+                shutil.copyfile(SOURCE_DB, tmp_db)
+            except Exception:
+                pass
+        conn = sqlite3.connect(tmp_db, timeout=15)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -361,6 +398,27 @@ def register_user(phone, username, password):
         elif "username" in err_msg:
             return False, None, "Bu foydalanuvchi nomi allaqachon band!"
         return False, None, "Ro'yxatdan o'tishda xatolik yuz berdi."
+    except sqlite3.OperationalError as e:
+        conn.close()
+        if "readonly" in str(e).lower():
+            try:
+                tmp_dir = "/tmp" if os.path.exists("/tmp") else os.environ.get("TEMP", ".")
+                tmp_db = os.path.join(tmp_dir, "algoplay.db")
+                if not os.path.exists(tmp_db) and os.path.exists(SOURCE_DB):
+                    shutil.copyfile(SOURCE_DB, tmp_db)
+                conn_retry = sqlite3.connect(tmp_db)
+                cursor_retry = conn_retry.cursor()
+                cursor_retry.execute("""
+                    INSERT INTO users (phone, username, password_hash, xp, level)
+                    VALUES (?, ?, ?, 0, 1)
+                """, (phone.strip(), username.strip(), pwd_hash))
+                conn_retry.commit()
+                uid = cursor_retry.lastrowid
+                conn_retry.close()
+                return True, uid, "Muvaffaqiyatli ro'yxatdan o'tdingiz!"
+            except Exception as retry_err:
+                return False, None, f"Baza xatosi: {str(retry_err)}"
+        return False, None, f"Baza xatosi: {str(e)}"
 
 def login_user(phone_or_user, password):
     conn = get_db()
