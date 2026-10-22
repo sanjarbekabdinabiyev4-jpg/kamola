@@ -423,16 +423,27 @@ def register_user(phone, username, password):
 def login_user(phone_or_user, password):
     conn = get_db()
     cursor = conn.cursor()
+    target = phone_or_user.strip()
     pwd_hash = hash_password(password)
+
+    # 1. Foydalanuvchi mavjudligini tekshirish
     cursor.execute("""
         SELECT * FROM users
-        WHERE (phone = ? OR username = ?) AND password_hash = ?
-    """, (phone_or_user.strip(), phone_or_user.strip(), pwd_hash))
-    user = cursor.fetchone()
+        WHERE phone = ? OR username = ?
+    """, (target, target))
+    user_exist = cursor.fetchone()
+
+    if not user_exist:
+        conn.close()
+        return False, None, "not_registered", "Siz hali ro'yxatdan o'tmagansiz! Iltimos, avval hisob yarating."
+
+    # 2. Parolni tekshirish
+    if user_exist["password_hash"] != pwd_hash:
+        conn.close()
+        return False, None, "wrong_password", "Parol noto'g'ri! Iltimos, parolingizni tekshirib qayta kiriting."
+
     conn.close()
-    if user:
-        return True, dict(user), "Xush kelibsiz!"
-    return False, None, "Telefon raqami / foydalanuvchi nomi yoki parol noto'g'ri!"
+    return True, dict(user_exist), "success", "Xush kelibsiz!"
 
 def login_admin(username, password):
     conn = get_db()

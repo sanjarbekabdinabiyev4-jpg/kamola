@@ -70,20 +70,36 @@
             </div>
         </div>
 
-        <!-- Quiz Tamomlangan xabar -->
-        <div id="quizFinishBox" style="display: none; text-align: center; padding: 40px 20px;">
-            <div style="font-size: 4rem; color: #fbbf24; margin-bottom: 16px;">🏆</div>
-            <h2 style="font-size: 2.2rem; margin-bottom: 12px;">Ajoyib Natija! Test Yakunlandi!</h2>
-            <p style="font-size: 1.1rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto 24px;">
-                Siz barcha savollarni muvaffaqiyatli yakunladingiz va <strong id="quizFinalXp" style="color: var(--amber);">+0 XP</strong> ga ega bo'ldingiz!
-            </p>
-            <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
-                <button class="btn btn-glow-primary" onclick="restartQuiz()">
-                    <i class="fa-solid fa-rotate-right"></i> Qaytadan O'ynash
-                </button>
-                <button class="btn btn-glow-purple" onclick="switchGameMode('puzzle')">
-                    <i class="fa-solid fa-puzzle-piece"></i> Kod Puzzleni Boshlash
-                </button>
+        <!-- Quiz Tamomlangan xabar va To'liq Tahlil -->
+        <div id="quizFinishBox" style="display: none; padding: 24px 10px;">
+            <div style="text-align: center; margin-bottom: 28px;">
+                <div style="font-size: 3.5rem; color: #fbbf24; margin-bottom: 12px;">🏆</div>
+                <h2 style="font-size: 2rem; margin-bottom: 8px;">Test Yakunlandi!</h2>
+                <p style="font-size: 1.05rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto 16px;">
+                    Siz barcha savollarga javob berdingiz.
+                </p>
+                <div style="display: inline-flex; gap: 20px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-glass); padding: 12px 24px; border-radius: var(--radius-full); margin-bottom: 20px;">
+                    <span style="font-size: 1rem;"><i class="fa-solid fa-circle-check" style="color: var(--green);"></i> Natija: <strong id="quizCorrectCount" style="color: #fff;">0</strong> / <strong id="quizTotalCount">0</strong></span>
+                    <span style="font-size: 1rem;"><i class="fa-solid fa-star" style="color: var(--amber);"></i> To'plangan: <strong id="quizFinalXp" style="color: var(--amber);">+0 XP</strong></span>
+                </div>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-glow-primary btn-sm" onclick="restartQuiz()">
+                        <i class="fa-solid fa-rotate-right"></i> Qaytadan Yechish
+                    </button>
+                    <button class="btn btn-glow-purple btn-sm" onclick="switchGameMode('puzzle')">
+                        <i class="fa-solid fa-puzzle-piece"></i> Kod Puzzlega O'tish
+                    </button>
+                </div>
+            </div>
+
+            <!-- Barcha savollarning to'g'ri javoblari tahlili -->
+            <div class="quiz-results-review" style="margin-top: 30px; border-top: 1px solid var(--border-glass); padding-top: 24px;">
+                <h3 style="font-size: 1.25rem; margin-bottom: 18px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-list-check" style="color: var(--cyan);"></i> Savollar Tahlili va To'g'ri Javoblar
+                </h3>
+                <div id="quizReviewList" style="display: flex; flex-direction: column; gap: 16px;">
+                    <!-- JS injects each question review here -->
+                </div>
             </div>
         </div>
     </div>

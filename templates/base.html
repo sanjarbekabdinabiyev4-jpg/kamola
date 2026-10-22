@@ -63,21 +63,12 @@
                         </a>
                     </li>
                     {% endif %}
-                    {% if current_user %}
                     <li>
-                        <a href="{{ url_for('profile_page') }}" class="nav-link {% if active_page == 'profile' %}active{% endif %}">
-                            <i class="fa-solid fa-user-astronaut"></i>
-                            <span>{{ current_user.username }} (Profil)</span>
+                        <a href="{{ url_for('rules_page') }}" class="nav-link {% if active_page == 'rules' %}active{% endif %}">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                            <span>Qoidalar</span>
                         </a>
                     </li>
-                    {% else %}
-                    <li>
-                        <a href="{{ url_for('auth_page') }}" class="nav-link {% if active_page == 'auth' %}active{% endif %}">
-                            <i class="fa-solid fa-right-to-bracket"></i>
-                            <span>Kirish / Ro'yxat</span>
-                        </a>
-                    </li>
-                    {% endif %}
                     {% if current_admin %}
                     <li>
                         <a href="{{ url_for('admin_dashboard') }}" class="nav-link nav-link-admin {% if active_page == 'admin' %}active{% endif %}">

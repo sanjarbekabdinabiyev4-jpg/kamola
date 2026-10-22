@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Foydalanish Qoidalari & Eslatmalar - AlgoPlay{% endblock %}
+
+{% block content %}
+<div class="rules-container" style="max-width: 1000px; margin: 40px auto 60px; padding: 0 24px;">
+    <!-- Rules Hero -->
+    <div class="section-header" style="text-align: center; margin-bottom: 40px;">
+        <span class="section-tag"><i class="fa-solid fa-scale-balanced"></i> Rasmiy Qo'llanma</span>
+        <h1 class="section-title">Platforma <span class="gradient-text">Qoidalari & Eslatmalar</span></h1>
+        <p class="section-subtitle">
+            AlgoPlay platformasida adolatli raqobat, qulay o'rganish muhiti va hisoblarning xavfsizligini ta'minlash uchun quyidagi qoidalarga qat'iy amal qiling.
+        </p>
+    </div>
+
+    <!-- 1. Taqiqlangan Amallar -->
+    <div class="rules-card" style="background: var(--bg-card); border: 1px solid rgba(239, 68, 68, 0.35); border-left: 5px solid #ef4444; border-radius: var(--radius-lg); padding: 30px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); backdrop-filter: blur(14px);">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 18px;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                <i class="fa-solid fa-ban"></i>
+            </div>
+            <div>
+                <h3 style="color: #fff; font-size: 1.3rem; margin: 0;">1. Qat'iyan Taqiqlangan Harakatlar</h3>
+                <span style="color: #fca5a5; font-size: 0.85rem; font-weight: 600;">Ushbu amallarni bajarish hisobning bloklanishiga olib keladi</span>
+            </div>
+        </div>
+
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px; padding-left: 0;">
+            <li style="display: flex; gap: 12px; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                <i class="fa-solid fa-circle-xmark" style="color: #ef4444; margin-top: 4px; flex-shrink: 0;"></i>
+                <span><strong>Botlar va Skriptlar:</strong> O'yinlarni yechishda avtomatlashtirilgan botlar, tashqi skriptlar yoki brauzer konsoli orqali natijalarni soxtalashtirish man etiladi.</span>
+            </li>
+            <li style="display: flex; gap: 12px; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                <i class="fa-solid fa-circle-xmark" style="color: #ef4444; margin-top: 4px; flex-shrink: 0;"></i>
+                <span><strong>Ko'p Hisob Ochish (Multi-Accounting):</strong> Bitta foydalanuvchi tomonidan bir nechta hisob ochib, sun'iy ravishda XP to'plash yoki peshqadamlar jadvalini egallash qat'iyan taqiqlanadi.</span>
+            </li>
+            <li style="display: flex; gap: 12px; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                <i class="fa-solid fa-circle-xmark" style="color: #ef4444; margin-top: 4px; flex-shrink: 0;"></i>
+                <span><strong>Hujum va Tizimni Buzish (Hacking / Exploits):</strong> Serverga haddan tashqari so'rovlar yuborish (DoS), SQL injeksiya yoki sayt xavfsizlik zaifliklaridan g'arazli maqsadlarda foydalanish man etiladi.</span>
+            </li>
+            <li style="display: flex; gap: 12px; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                <i class="fa-solid fa-circle-xmark" style="color: #ef4444; margin-top: 4px; flex-shrink: 0;"></i>
+                <span><strong>Noo'rin Profil Nomi:</strong> Foydalanuvchi nomi (username) sifatida haqoratomuz, behayo yoki boshqa foydalanuvchilarni kamsituvchi so'zlarni tanlash taqiqlanadi.</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 2. Jazo Choralari -->
+    <div class="rules-card" style="background: var(--bg-card); border: 1px solid rgba(251, 191, 36, 0.35); border-left: 5px solid #fbbf24; border-radius: var(--radius-lg); padding: 30px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); backdrop-filter: blur(14px);">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 18px;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(251, 191, 36, 0.15); color: #fbbf24; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                <i class="fa-solid fa-gavel"></i>
+            </div>
+            <div>
+                <h3 style="color: #fff; font-size: 1.3rem; margin: 0;">2. Qoidabuzarlik Oqibatlari</h3>
+                <span style="color: #fde68a; font-size: 0.85rem; font-weight: 600;">Tartibni buzganlarga qo'llaniladigan choralar</span>
+            </div>
+        </div>
+
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; padding-left: 0;">
+            <li style="display: flex; gap: 12px; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                <i class="fa-solid fa-triangle-exclamation" style="color: #fbbf24; margin-top: 4px; flex-shrink: 0;"></i>
+                <span><strong>Ballarni nollash:</strong> Nofaol yoki nohalol yo'l bilan olingan XP ballari admin tomonidan to'liq bekor qilinadi va daraja 1-bosqichga tushiriladi.</span>
+            </li>
+            <li style="display: flex; gap: 12px; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                <i class="fa-solid fa-triangle-exclamation" style="color: #fbbf24; margin-top: 4px; flex-shrink: 0;"></i>
+                <span><strong>Hisobni o'chirish:</strong> Qoidalarni qo'pol ravishda buzgan akkauntlar ogohlantirishsiz butunlay o'chirib tashlanadi va telefon raqami qora ro'yxatga kiritiladi.</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 3. Muhim Eslatmalar & Maslahatlar -->
+    <div class="rules-card" style="background: var(--bg-card); border: 1px solid rgba(0, 242, 254, 0.35); border-left: 5px solid var(--cyan); border-radius: var(--radius-lg); padding: 30px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); backdrop-filter: blur(14px);">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 18px;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(0, 242, 254, 0.15); color: var(--cyan); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                <i class="fa-solid fa-lightbulb"></i>
+            </div>
+            <div>
+                <h3 style="color: #fff; font-size: 1.3rem; margin: 0;">3. Muhim Eslatmalar va Maslahatlar</h3>
+                <span style="color: #67e8f9; font-size: 0.85rem; font-weight: 600;">O'rganish samaradorligini oshirish uchun tavsiyalar</span>
+            </div>
+        </div>
+
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px; padding-left: 0;">
+            <li style="display: flex; gap: 12px; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                <i class="fa-solid fa-circle-check" style="color: var(--cyan); margin-top: 4px; flex-shrink: 0;"></i>
+                <span><strong>Avval nazariya, keyin amaliyot:</strong> O'yinlarni boshlashdan oldin <a href="{{ url_for('learn_page') }}" style="color: var(--cyan); font-weight: 700; text-decoration: underline;">"Dasturlash"</a> bo'limidagi darslarni o'qib chiqing. Savollar aynan o'sha mavzulardan tuzilgan.</span>
+            </li>
+            <li style="display: flex; gap: 12px; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                <i class="fa-solid fa-circle-check" style="color: var(--cyan); margin-top: 4px; flex-shrink: 0;"></i>
+                <span><strong>Darajalar Tizimi:</strong> Har 100 XP to'plaganingizda darajangiz (Level) oshadi va siz yangi unvonlarga (Grandmaster, Algoritm Ustasi) ega bo'lasiz.</span>
+            </li>
+            <li style="display: flex; gap: 12px; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                <i class="fa-solid fa-circle-check" style="color: var(--cyan); margin-top: 4px; flex-shrink: 0;"></i>
+                <span><strong>Savollar Tahlili:</strong> Barcha savollarni yechib bo'lgach, platforma to'liq hisobot va tushuntirishlarni ko'rsatadi. Xatolaringiz ustida ishlab, bilimlaringizni mustahkamlang.</span>
+            </li>
+            <li style="display: flex; gap: 12px; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                <i class="fa-solid fa-circle-check" style="color: var(--cyan); margin-top: 4px; flex-shrink: 0;"></i>
+                <span><strong>Xatolik haqida xabar berish:</strong> Saytda biror texnik xatolik (bug) topsangiz, undan nohalol foydalanmasdan ma'muriyatga xabar berish har bir o'quvchining burchidir.</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Quick Action Navigation -->
+    <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 36px;">
+        <a href="{{ url_for('learn_page') }}" class="btn btn-glow-primary">
+            <i class="fa-solid fa-book-bookmark"></i> Dasturlash Darslariga O'tish
+        </a>
+        <a href="{{ url_for('games_page') }}" class="btn btn-glow-purple">
+            <i class="fa-solid fa-gamepad"></i> O'yinlar Maydoni
+        </a>
+        {% if current_user %}
+        <a href="{{ url_for('profile_page') }}" class="btn btn-outline">
+            <i class="fa-solid fa-user-astronaut"></i> Mening Profilim
+        </a>
+        {% else %}
+        <a href="{{ url_for('auth_page') }}" class="btn btn-outline">
+            <i class="fa-solid fa-right-to-bracket"></i> Tizimga Kirish
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

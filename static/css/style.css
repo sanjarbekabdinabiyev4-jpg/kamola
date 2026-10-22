@@ -1451,6 +1451,13 @@ input[type="password"].form-input {
     transform: translateX(4px);
 }
 
+.quiz-option-btn.selected {
+    background: rgba(0, 242, 254, 0.15) !important;
+    border-color: var(--cyan) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.3) !important;
+}
+
 .quiz-option-btn.correct {
     background: rgba(16, 185, 129, 0.2) !important;
     border-color: var(--green) !important;

@@ -8,6 +8,7 @@ let currentQuizIdx = 0;
 let userQuizScore = 0;
 let totalQuizXpEarned = 0;
 let quizStreak = 0;
+let userQuizAnswers = []; // O'quvchi tanlagan javoblar saqlanadi
 
 let currentPuzzleIdx = 0;
 let currentPuzzleBlocks = [];
@@ -73,12 +74,8 @@ function renderQuizQuestion() {
     if (!questions.length) return;
 
     if (currentQuizIdx >= questions.length) {
-        // Quiz tamomlandi
-        document.getElementById("quizContentBox").style.display = "none";
-        document.getElementById("quizFinishBox").style.display = "block";
-        document.getElementById("quizFinalXp").textContent = `+${totalQuizXpEarned} XP`;
-        fireConfetti();
-        sfx.levelUp();
+        // Hamma savollar ishlab bo'lingach, natijalar va to'g'ri javoblarni ko'rsatish
+        finishQuizArena(questions);
         return;
     }
 
@@ -113,78 +110,111 @@ function renderQuizQuestion() {
         optionsGrid.appendChild(btn);
     });
 
-    document.getElementById("quizFeedbackBox").style.display = "none";
+    const feedbackBox = document.getElementById("quizFeedbackBox");
+    if (feedbackBox) feedbackBox.style.display = "none";
 }
 
 function selectQuizAnswer(selectedKey, clickedBtn) {
-    const questions = window.ALGOPLAY_QUESTIONS || [];
-    const q = questions[currentQuizIdx];
-    const isCorrect = selectedKey === q.correct_option;
-
-    // Barcha tugmalarni o'chirib qo'yish
+    sfx.click();
+    
+    // Savol paytida to'g'ri/noto'g'ri javob fosh etilmaydi va yashil qilinmaydi!
+    // Faqat tanlangan holat (selected) ko'rsatiladi
     const buttons = document.querySelectorAll(".quiz-option-btn");
     buttons.forEach(btn => btn.disabled = true);
+    clickedBtn.classList.add("selected");
 
-    const feedbackBox = document.getElementById("quizFeedbackBox");
-    const feedbackTitle = document.getElementById("quizFeedbackTitle");
-    const feedbackText = document.getElementById("quizFeedbackText");
-    const streakBadge = document.getElementById("quizStreakBadge");
-    const streakCount = document.getElementById("quizStreakCount");
+    // Foydalanuvchining javobini xotiraga yozamiz
+    userQuizAnswers[currentQuizIdx] = selectedKey;
 
-    if (isCorrect) {
-        clickedBtn.classList.add("correct");
-        sfx.correct();
-        fireConfetti();
-        
-        quizStreak++;
-        let earnedXp = q.points || 10;
-        let streakBonus = 0;
-        
-        if (quizStreak >= 2) {
-            streakBonus = (quizStreak - 1) * 5;
-            earnedXp += streakBonus;
-            if (streakBadge && streakCount) {
-                streakCount.textContent = quizStreak;
-                streakBadge.style.display = "inline-flex";
-            }
-        }
-
-        userQuizScore += earnedXp;
-        totalQuizXpEarned += earnedXp;
-        document.getElementById("quizUserScore").textContent = userQuizScore;
-
-        let bonusText = streakBonus > 0 ? ` (Streak Bonusi: +${streakBonus} XP)` : "";
-        feedbackTitle.innerHTML = `<span style="color: var(--green);"><i class="fa-solid fa-circle-check"></i> To'g'ri javob! +${earnedXp} XP${bonusText}</span>`;
-        feedbackText.textContent = q.explanation || "Barakalla! Ushbu savolga to'g'ri javob berdingiz.";
-
-        // Serverga XP saqlash
-        saveScoreToServer("quiz", earnedXp, earnedXp, `Savol: ${q.question.substring(0, 30)}...`);
-    } else {
-        clickedBtn.classList.add("wrong");
-        sfx.wrong();
-        quizStreak = 0;
-        if (streakBadge) {
-            streakBadge.style.display = "none";
-        }
-
-        // To'g'ri javobni ko'rsatish
-        buttons.forEach(btn => {
-            if (btn.querySelector(".option-letter").textContent.trim() === q.correct_option) {
-                btn.classList.add("correct");
-            }
-        });
-
-        feedbackTitle.innerHTML = `<span style="color: var(--red);"><i class="fa-solid fa-circle-xmark"></i> Noto'g'ri! To'g'ri javob: ${q.correct_option}</span>`;
-        feedbackText.textContent = q.explanation || "Keyingi savolda omad!";
-    }
-
-    feedbackBox.style.display = "flex";
+    // 350ms dan so'ng keyingi savolga o'tish
+    setTimeout(() => {
+        currentQuizIdx++;
+        renderQuizQuestion();
+    }, 380);
 }
 
-function nextQuizQuestion() {
-    sfx.click();
-    currentQuizIdx++;
-    renderQuizQuestion();
+function finishQuizArena(questions) {
+    document.getElementById("quizContentBox").style.display = "none";
+    document.getElementById("quizFinishBox").style.display = "block";
+
+    let correctCount = 0;
+    let earnedTotalXp = 0;
+    const reviewContainer = document.getElementById("quizReviewList");
+    reviewContainer.innerHTML = "";
+
+    questions.forEach((q, idx) => {
+        const userAns = userQuizAnswers[idx] || "—";
+        const isCorrect = userAns === q.correct_option;
+        const qPoints = q.points || 10;
+
+        if (isCorrect) {
+            correctCount++;
+            earnedTotalXp += qPoints;
+        }
+
+        // Har bir savol varianti matnini topish
+        let userAnsText = "";
+        let correctAnsText = "";
+        const optMap = { "A": q.option_a, "B": q.option_b, "C": q.option_c, "D": q.option_d };
+        userAnsText = optMap[userAns] || "Javob berilmadi";
+        correctAnsText = optMap[q.correct_option] || "";
+
+        const card = document.createElement("div");
+        card.className = "quiz-review-card";
+        card.style.cssText = `
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid ${isCorrect ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)'};
+            border-left: 4px solid ${isCorrect ? 'var(--green)' : 'var(--red)'};
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        `;
+
+        card.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <span style="font-weight: 700; color: #fff; font-size: 0.98rem;">
+                    ${idx + 1}-savol: ${escapeHtml(q.question)}
+                </span>
+                <span class="badge-beta" style="background: ${isCorrect ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)'}; color: ${isCorrect ? '#34d399' : '#f87171'}; border-color: ${isCorrect ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'};">
+                    ${isCorrect ? `<i class="fa-solid fa-check"></i> To'g'ri (+${qPoints} XP)` : `<i class="fa-solid fa-xmark"></i> Noto'g'ri`}
+                </span>
+            </div>
+            
+            ${q.code_snippet ? `<pre class="code-pre" style="padding: 10px; font-size: 0.85rem; margin: 4px 0;"><code>${escapeHtml(q.code_snippet)}</code></pre>` : ''}
+
+            <div style="display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.9rem; margin-top: 4px;">
+                <div style="color: ${isCorrect ? 'var(--green)' : '#fca5a5'};">
+                    <strong>Sizning javobingiz:</strong> [${userAns}] ${escapeHtml(userAnsText)}
+                </div>
+                ${!isCorrect ? `
+                <div style="color: var(--green);">
+                    <strong>To'g'ri javob:</strong> [${q.correct_option}] ${escapeHtml(correctAnsText)}
+                </div>` : ''}
+            </div>
+
+            ${q.explanation ? `
+            <div style="background: rgba(0, 242, 254, 0.05); border: 1px solid rgba(0, 242, 254, 0.15); border-radius: 6px; padding: 10px 14px; font-size: 0.86rem; color: var(--text-secondary); margin-top: 4px;">
+                <i class="fa-solid fa-lightbulb" style="color: var(--amber); margin-right: 6px;"></i>
+                <strong>Tushuntirish:</strong> ${escapeHtml(q.explanation)}
+            </div>` : ''}
+        `;
+        reviewContainer.appendChild(card);
+    });
+
+    document.getElementById("quizCorrectCount").textContent = correctCount;
+    document.getElementById("quizTotalCount").textContent = questions.length;
+    document.getElementById("quizFinalXp").textContent = `+${earnedTotalXp} XP`;
+    document.getElementById("quizUserScore").textContent = earnedTotalXp;
+
+    if (earnedTotalXp > 0) {
+        saveScoreToServer("quiz", earnedTotalXp, earnedTotalXp, `Quiz Arena: ${correctCount}/${questions.length} ta to'g'ri`);
+        fireConfetti();
+        sfx.levelUp();
+    } else {
+        sfx.wrong();
+    }
 }
 
 function restartQuiz() {
@@ -192,9 +222,7 @@ function restartQuiz() {
     currentQuizIdx = 0;
     userQuizScore = 0;
     totalQuizXpEarned = 0;
-    quizStreak = 0;
-    const streakBadge = document.getElementById("quizStreakBadge");
-    if (streakBadge) streakBadge.style.display = "none";
+    userQuizAnswers = [];
     document.getElementById("quizUserScore").textContent = "0";
     document.getElementById("quizContentBox").style.display = "block";
     document.getElementById("quizFinishBox").style.display = "none";

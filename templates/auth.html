@@ -5,77 +5,6 @@
 {% block content %}
 <div class="auth-wrapper">
     <div class="auth-container">
-        {% if current_user %}
-        <!-- Foydalanuvchi tizimga kirgan bo'lsa - Profil kartasi -->
-        <div class="auth-profile-card">
-            <div class="profile-avatar-big">
-                <i class="fa-solid fa-user-astronaut"></i>
-            </div>
-            <h2 class="profile-username">{{ current_user.username }}</h2>
-            <div style="margin-bottom: 12px;">
-                <span class="badge-beta" style="font-size: 0.8rem; padding: 4px 12px; background: rgba(121, 40, 202, 0.2); border-color: rgba(121, 40, 202, 0.4); color: #c084fc;">
-                    {% if current_user.level >= 5 %}
-                        👑 Grandmaster Dasturchi
-                    {% elif current_user.level >= 3 %}
-                        🔥 Algoritm Ustasi
-                    {% elif current_user.level >= 2 %}
-                        ⚡ Tezkor Koder
-                    {% else %}
-                        🌱 Boshlovchi Qahramon
-                    {% endif %}
-                </span>
-            </div>
-            <p class="profile-phone"><i class="fa-solid fa-phone"></i> {{ current_user.phone }}</p>
-
-            <div class="profile-stats-grid">
-                <div class="profile-stat-box">
-                    <div class="val">{{ current_user.level }}</div>
-                    <div class="lbl">Daraja (Level)</div>
-                </div>
-                <div class="profile-stat-box">
-                    <div class="val">{{ current_user.xp }}</div>
-                    <div class="lbl">To'plangan XP</div>
-                </div>
-            </div>
-
-            <!-- XP Progress Bar -->
-            <div style="margin-bottom: 24px; text-align: left;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 6px;">
-                    <span>Keyingi darajagacha progress</span>
-                    <span style="color: var(--cyan); font-weight: 700;">{{ current_user.xp % 100 }} / 100 XP</span>
-                </div>
-                <div style="height: 10px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; padding: 2px;">
-                    <div style="width: {{ current_user.xp % 100 }}%; height: 100%; background: var(--gradient-primary); border-radius: 999px; box-shadow: 0 0 10px rgba(0, 242, 254, 0.5); transition: width 0.5s ease;"></div>
-                </div>
-            </div>
-
-            <!-- Yutuqlar (Achievements) Badges -->
-            <div style="margin-bottom: 28px; padding-top: 18px; border-top: 1px solid var(--border-glass);">
-                <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; display: block; margin-bottom: 12px;">Erishilgan Nishonlar</span>
-                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-                    <span class="badge-beta" title="Platformaga qo'shildi" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3);">
-                        <i class="fa-solid fa-flag-checkered"></i> Birinchi Qadam
-                    </span>
-                    <span class="badge-beta" title="Testlarda faol" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border-color: rgba(251, 191, 36, 0.3);">
-                        <i class="fa-solid fa-brain"></i> Bilimdon
-                    </span>
-                    <span class="badge-beta" title="Xatolarni topuvchi" style="background: rgba(236, 72, 153, 0.15); color: #f472b6; border-color: rgba(236, 72, 153, 0.3);">
-                        <i class="fa-solid fa-bug-slash"></i> Bug Hunter
-                    </span>
-                </div>
-            </div>
-
-            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                <a href="{{ url_for('games_page') }}" class="btn btn-glow-primary">
-                    <i class="fa-solid fa-gamepad"></i> O'yinlarga O'tish
-                </a>
-                <a href="{{ url_for('api_logout') }}" class="btn btn-danger">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Chiqish
-                </a>
-            </div>
-        </div>
-
-        {% else %}
         <!-- Tizimga kirish / Ro'yxatdan o'tish formasi -->
         <div class="auth-tabs">
             <button class="auth-tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">
@@ -158,7 +87,6 @@
                 </p>
             </form>
         </div>
-        {% endif %}
     </div>
 </div>
 {% endblock %}
@@ -227,6 +155,25 @@ async function handleLogin(e) {
             showToast(msg, "danger");
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Tizimga Kirish';
+
+            // Agar foydalanuvchi hali ro'yxatdan o'tmagan bo'lsa, avtomatik Ro'yxatdan o'tish tabiga yo'naltirish
+            if (data && data.reason === "not_registered") {
+                setTimeout(() => {
+                    switchAuthTab('register');
+                    const val = phoneOrUser;
+                    if (/^\+?\d+$/.test(val)) {
+                        const pInput = document.getElementById("regPhone");
+                        if (pInput) pInput.value = val;
+                        const uInput = document.getElementById("regUsername");
+                        if (uInput) uInput.focus();
+                    } else {
+                        const uInput = document.getElementById("regUsername");
+                        if (uInput) uInput.value = val;
+                        const pInput = document.getElementById("regPhone");
+                        if (pInput) pInput.focus();
+                    }
+                }, 900);
+            }
         }
     } catch (err) {
         sfx.wrong();

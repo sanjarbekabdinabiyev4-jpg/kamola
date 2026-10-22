@@ -85,6 +85,11 @@ def profile_page():
         
     return render_template("profile.html", active_page="profile", profile=profile_data)
 
+# ==================== QOIDALAR SAHIFASI ====================
+@app.route("/rules")
+def rules_page():
+    return render_template("rules.html", active_page="rules")
+
 @app.route("/api/user/delete-account", methods=["POST"])
 def api_delete_account():
     if "user_id" not in session:
@@ -142,13 +147,18 @@ def api_login():
         if not phone_or_user or not password:
             return jsonify({"success": False, "message": "Login va parolni kiriting!"}), 400
 
-        success, user, message = db.login_user(phone_or_user, password)
+        success, user, reason, message = db.login_user(phone_or_user, password)
         if success:
             session["user_id"] = user["id"]
             session["username"] = user["username"]
             return jsonify({"success": True, "message": message, "user": user})
         else:
-            return jsonify({"success": False, "message": message}), 401
+            return jsonify({
+                "success": False, 
+                "reason": reason, 
+                "message": message,
+                "phone_or_user": phone_or_user
+            }), 401
     except Exception as e:
         return jsonify({"success": False, "message": f"Serverda xatolik yuz berdi: {str(e)}"}), 500
 
