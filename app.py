@@ -86,9 +86,12 @@ def api_register():
 
         success, user_id, message = db.register_user(phone, username, password)
         if success:
-            session["user_id"] = user_id
-            session["username"] = username
-            return jsonify({"success": True, "message": message, "user": {"id": user_id, "username": username, "phone": phone, "xp": 0, "level": 1}})
+            # Ro'yxatdan o'tgandan so'ng avtomatik kirib ketmaydi, foydalanuvchi login orqali kirishi kerak
+            return jsonify({
+                "success": True, 
+                "message": "Hisobingiz muvaffaqiyatli yaratildi! Endi profilingizga kiring.", 
+                "username": username
+            })
         else:
             return jsonify({"success": False, "message": message}), 400
     except Exception as e:

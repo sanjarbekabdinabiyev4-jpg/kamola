@@ -53,6 +53,14 @@ class AlgoPlayTestCase(unittest.TestCase):
         json_data = res.get_json()
         self.assertTrue(json_data["success"])
 
+        # Login test (chunki ro'yxatdan o'tgandan so'ng avtomatik kirilmaydi)
+        login_res = self.client.post("/api/auth/login", json={
+            "phone_or_user": username,
+            "password": "password123"
+        })
+        self.assertEqual(login_res.status_code, 200)
+        self.assertTrue(login_res.get_json()["success"])
+
         # Save score
         score_res = self.client.post("/api/game/save-score", json={
             "game_type": "quiz",

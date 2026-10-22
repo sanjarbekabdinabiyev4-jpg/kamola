@@ -270,10 +270,28 @@ async function handleRegister(e) {
         if (res.ok && data && data.success) {
             sfx.correct();
             fireConfetti();
-            showToast("Hisob yaratildi! AlgoPlay olamiga xush kelibsiz!", "success");
+            showToast(data.message || "Hisob muvaffaqiyatli yaratildi! Endi profilingizga kiring.", "success");
+            
+            // Ro'yxatdan o'tish formasini tozalaymiz
+            document.getElementById("registerForm").reset();
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Hisob Yaratish';
+            
+            // Kirish formasi maydonini yangi yaratilgan username bilan to'ldiramiz
+            const loginInput = document.getElementById("loginPhoneOrUser");
+            if (loginInput) {
+                loginInput.value = username;
+            }
+            const loginPass = document.getElementById("loginPassword");
+            if (loginPass) {
+                loginPass.value = "";
+                loginPass.focus();
+            }
+
+            // Kirish tabiga o'tkazish
             setTimeout(() => {
-                window.location.href = "{{ url_for('games_page') }}";
-            }, 800);
+                switchAuthTab('login');
+            }, 600);
         } else {
             sfx.wrong();
             const msg = (data && data.message) ? data.message : "Ro'yxatdan o'tishda xatolik yuz berdi!";
