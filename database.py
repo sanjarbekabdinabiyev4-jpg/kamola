@@ -551,6 +551,56 @@ def get_admin_stats():
         "recent_games": recent_games
     }
 
+def get_user_profile_data(user_id):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, username, phone, xp, level, created_at FROM users WHERE id = ?", (user_id,))
+    user_row = cursor.fetchone()
+    if not user_row:
+        conn.close()
+        return None
+    user = dict(user_row)
+
+    # Reytingdagi o'rni
+    cursor.execute("SELECT COUNT(*) + 1 as rank FROM users WHERE xp > ?", (user["xp"],))
+    rank_row = cursor.fetchone()
+    user["rank"] = rank_row["rank"] if rank_row else 1
+
+    # O'ynagan o'yinlari statistikasi
+    cursor.execute("SELECT COUNT(*) as total_games, COALESCE(SUM(xp_earned), 0) as total_earned FROM game_scores WHERE user_id = ?", (user_id,))
+    stats_row = cursor.fetchone()
+    user["total_games"] = stats_row["total_games"] if stats_row else 0
+    user["total_earned"] = stats_row["total_earned"] if stats_row else 0
+
+    # Oxirgi o'yinlar tarixi
+    cursor.execute("""
+        SELECT game_type, score, xp_earned, details, played_at
+        FROM game_scores
+        WHERE user_id = ?
+        ORDER BY played_at DESC
+        LIMIT 8
+    """, (user_id,))
+    user["history"] = [dict(r) for r in cursor.fetchall()]
+
+    conn.close()
+    return user
+
+def delete_user_account(user_id, password=None):
+    conn = get_db()
+    cursor = conn.cursor()
+    if password is not None and password.strip() != "":
+        pwd_hash = hash_password(password.strip())
+        cursor.execute("SELECT id FROM users WHERE id = ? AND password_hash = ?", (user_id, pwd_hash))
+        if not cursor.fetchone():
+            conn.close()
+            return False, "Kiritilgan parol noto'g'ri!"
+
+    cursor.execute("DELETE FROM game_scores WHERE user_id = ?", (user_id,))
+    cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+    return True, "Hisobingiz va barcha ma'lumotlaringiz muvaffaqiyatli o'chirildi."
+
 if __name__ == "__main__":
     init_db()
     print("Database muvaffaqiyatli ishga tushirildi!")

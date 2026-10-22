@@ -71,6 +71,22 @@ class AlgoPlayTestCase(unittest.TestCase):
         self.assertEqual(score_res.status_code, 200)
         self.assertTrue(score_res.get_json()["success"])
 
+        # Profile page check
+        prof_res = self.client.get("/profile")
+        self.assertEqual(prof_res.status_code, 200)
+        self.assertIn(username.encode(), prof_res.data)
+
+        # Delete account check
+        del_res = self.client.post("/api/user/delete-account", json={
+            "password": "password123"
+        })
+        self.assertEqual(del_res.status_code, 200)
+        self.assertTrue(del_res.get_json()["success"])
+
+        # Try accessing profile again - should redirect to auth
+        prof_after = self.client.get("/profile", follow_redirects=False)
+        self.assertEqual(prof_after.status_code, 302)
+
     def test_admin_flow(self):
         # Admin login
         res = self.client.post("/admin/login", data={

@@ -65,7 +65,42 @@ def home_page():
 # ==================== 2-SAHIFA: LOGIN / REGISTRATSIYA ====================
 @app.route("/auth")
 def auth_page():
+    if "user_id" in session:
+        return redirect(url_for("profile_page"))
     return render_template("auth.html", active_page="auth")
+
+# ==================== PROFIL SAHIFASI ====================
+@app.route("/profile")
+def profile_page():
+    if "user_id" not in session:
+        flash("Profilni ko'rish uchun avval tizimga kiring!", "danger")
+        return redirect(url_for("auth_page"))
+    
+    profile_data = db.get_user_profile_data(session["user_id"])
+    if not profile_data:
+        session.pop("user_id", None)
+        session.pop("username", None)
+        flash("Foydalanuvchi topilmadi!", "danger")
+        return redirect(url_for("auth_page"))
+        
+    return render_template("profile.html", active_page="profile", profile=profile_data)
+
+@app.route("/api/user/delete-account", methods=["POST"])
+def api_delete_account():
+    if "user_id" not in session:
+        return jsonify({"success": False, "message": "Avval tizimga kiring!"}), 401
+    
+    data = request.get_json(silent=True) or {}
+    password = data.get("password")
+    user_id = session["user_id"]
+    
+    success, message = db.delete_user_account(user_id, password)
+    if success:
+        session.pop("user_id", None)
+        session.pop("username", None)
+        return jsonify({"success": True, "message": message, "redirect_url": url_for("home_page")})
+    else:
+        return jsonify({"success": False, "message": message}), 400
 
 @app.route("/api/auth/register", methods=["POST"])
 def api_register():

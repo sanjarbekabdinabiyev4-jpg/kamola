@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+{% block title %}{{ profile.username }} - Shaxsiy Profil | AlgoPlay{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- Profile Hero Card -->
+    <div class="profile-header-card">
+        <div class="profile-hero-top">
+            <div class="profile-avatar-wrap">
+                <div class="profile-avatar-giant">
+                    <i class="fa-solid fa-user-astronaut"></i>
+                </div>
+                <span class="profile-level-badge">Lv.{{ profile.level }}</span>
+            </div>
+            
+            <div class="profile-main-meta">
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <h1 class="profile-title">{{ profile.username }}</h1>
+                    <span class="profile-rank-badge">
+                        {% if profile.level >= 5 %}
+                            👑 Grandmaster Dasturchi
+                        {% elif profile.level >= 3 %}
+                            🔥 Algoritm Ustasi
+                        {% elif profile.level >= 2 %}
+                            ⚡ Tezkor Koder
+                        {% else %}
+                            🌱 Boshlovchi Qahramon
+                        {% endif %}
+                    </span>
+                </div>
+                
+                <div class="profile-meta-tags">
+                    <span><i class="fa-solid fa-phone"></i> {{ profile.phone }}</span>
+                    <span><i class="fa-solid fa-calendar-check"></i> A'zo bo'lgan: {{ profile.created_at[:10] }}</span>
+                    <span><i class="fa-solid fa-trophy" style="color: #fbbf24;"></i> Reytingda: <strong>#{{ profile.rank }}-o'rin</strong></span>
+                </div>
+            </div>
+
+            <div class="profile-hero-actions">
+                <a href="{{ url_for('games_page') }}" class="btn btn-glow-primary">
+                    <i class="fa-solid fa-gamepad"></i> O'yin O'ynash
+                </a>
+                <a href="{{ url_for('api_logout') }}" class="btn btn-outline" title="Tizimdan chiqish">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Chiqish
+                </a>
+            </div>
+        </div>
+
+        <!-- Progress to next level -->
+        <div class="profile-progress-section">
+            <div class="progress-labels">
+                <span><i class="fa-solid fa-bolt" style="color: var(--cyan);"></i> Keyingi darajaga (Lv.{{ profile.level + 1 }}) o'tish</span>
+                <span class="xp-counter"><strong>{{ profile.xp % 100 }}</strong> / 100 XP</span>
+            </div>
+            <div class="custom-progress-track">
+                <div class="custom-progress-bar" style="width: {{ profile.xp % 100 }}%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 Stats Cards -->
+    <div class="profile-stats-grid">
+        <div class="pstat-card">
+            <div class="pstat-icon icon-cyan">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div class="pstat-info">
+                <span class="pstat-val">{{ profile.level }}</span>
+                <span class="pstat-label">Joriy Daraja (Level)</span>
+            </div>
+        </div>
+
+        <div class="pstat-card">
+            <div class="pstat-icon icon-amber">
+                <i class="fa-solid fa-star"></i>
+            </div>
+            <div class="pstat-info">
+                <span class="pstat-val">{{ profile.xp }}</span>
+                <span class="pstat-label">Jami To'plangan XP</span>
+            </div>
+        </div>
+
+        <div class="pstat-card">
+            <div class="pstat-icon icon-purple">
+                <i class="fa-solid fa-ranking-star"></i>
+            </div>
+            <div class="pstat-info">
+                <span class="pstat-val">#{{ profile.rank }}</span>
+                <span class="pstat-label">Peshqadamlik O'rni</span>
+            </div>
+        </div>
+
+        <div class="pstat-card">
+            <div class="pstat-icon icon-green">
+                <i class="fa-solid fa-gamepad"></i>
+            </div>
+            <div class="pstat-info">
+                <span class="pstat-val">{{ profile.total_games }} ta</span>
+                <span class="pstat-label">O'ynalgan O'yinlar</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Split: Achievements & Recent Games History -->
+    <div class="profile-details-grid">
+        <!-- 1. Yutuqlar (Achievements) -->
+        <div class="profile-panel">
+            <div class="panel-header">
+                <h3><i class="fa-solid fa-medal" style="color: #fbbf24;"></i> Yutuqlar & Nishonlar</h3>
+            </div>
+            <div class="badges-list">
+                <div class="badge-item active">
+                    <div class="badge-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                        <i class="fa-solid fa-flag-checkered"></i>
+                    </div>
+                    <div>
+                        <strong>Birinchi Qadam</strong>
+                        <p>Platformada muvaffaqiyatli hisob ochdingiz</p>
+                    </div>
+                </div>
+
+                <div class="badge-item {% if profile.xp >= 50 %}active{% endif %}">
+                    <div class="badge-icon" style="background: rgba(0, 242, 254, 0.15); color: var(--cyan);">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <div>
+                        <strong>Bilimdon O'quvchi</strong>
+                        <p>Kamida 50 XP ball to'plaganlik uchun</p>
+                    </div>
+                </div>
+
+                <div class="badge-item {% if profile.level >= 2 %}active{% endif %}">
+                    <div class="badge-icon" style="background: rgba(121, 40, 202, 0.15); color: #c084fc;">
+                        <i class="fa-solid fa-puzzle-piece"></i>
+                    </div>
+                    <div>
+                        <strong>Kod Tartiblovchi</strong>
+                        <p>2-daraja (Level 2) ga yetishganlik uchun</p>
+                    </div>
+                </div>
+
+                <div class="badge-item {% if profile.total_games >= 5 %}active{% endif %}">
+                    <div class="badge-icon" style="background: rgba(236, 72, 153, 0.15); color: #f472b6;">
+                        <i class="fa-solid fa-fire"></i>
+                    </div>
+                    <div>
+                        <strong>Faol O'yinchi</strong>
+                        <p>5 tadan ortiq o'yin o'ynaganlik uchun</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Oxirgi O'yinlar Tarixi -->
+        <div class="profile-panel">
+            <div class="panel-header">
+                <h3><i class="fa-solid fa-clock-rotate-left" style="color: var(--cyan);"></i> Oxirgi O'yin Faolligingiz</h3>
+            </div>
+            
+            {% if profile.history %}
+            <div class="history-list">
+                {% for h in profile.history %}
+                <div class="history-item">
+                    <div class="history-left">
+                        <span class="game-tag tag-{{ h.game_type }}">
+                            {% if h.game_type == 'quiz' %}
+                                <i class="fa-solid fa-brain"></i> Quiz Arena
+                            {% elif h.game_type == 'puzzle' %}
+                                <i class="fa-solid fa-puzzle-piece"></i> Kod Puzzle
+                            {% elif h.game_type == 'bug' %}
+                                <i class="fa-solid fa-bug"></i> Bug Hunter
+                            {% else %}
+                                <i class="fa-solid fa-terminal"></i> Output Predictor
+                            {% endif %}
+                        </span>
+                        <span class="history-details">{{ h.details or "Topshiriq yechildi" }}</span>
+                    </div>
+                    <div class="history-right">
+                        <span class="history-xp">+{{ h.xp_earned }} XP</span>
+                        <span class="history-time">{{ h.played_at[:16] }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
+                <i class="fa-solid fa-gamepad" style="font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4;"></i>
+                <p>Hozircha o'yin o'ynamagansiz.</p>
+                <a href="{{ url_for('games_page') }}" class="btn btn-glow-primary btn-sm" style="margin-top: 14px;">
+                    <i class="fa-solid fa-play"></i> Ilk O'yinni Boshlash
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Danger Zone: Account Deletion -->
+    <div class="danger-zone-card">
+        <div class="danger-zone-info">
+            <h4><i class="fa-solid fa-triangle-exclamation"></i> Hisobni O'chirish (Danger Zone)</h4>
+            <p>
+                Agar hisobingizni o'chirib tashlasangiz, barcha to'plagan darajangiz (Level), XP ballaringiz va natijalaringiz butunlay o'chib ketadi. Ushbu amalni ortga qaytarib bo'lmaydi!
+            </p>
+        </div>
+        <button type="button" class="btn btn-danger" onclick="openDeleteModal()">
+            <i class="fa-solid fa-trash-can"></i> Hisobimni O'chirish
+        </button>
+    </div>
+</div>
+
+<!-- Modal: Delete Confirmation -->
+<div id="deleteModal" class="custom-modal-backdrop" style="display: none;">
+    <div class="custom-modal-card">
+        <div class="modal-icon-danger">
+            <i class="fa-solid fa-user-xmark"></i>
+        </div>
+        <h3>Hisobingizni o'chirmoqchimisiz?</h3>
+        <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 12px 0 20px;">
+            Tasdiqlash uchun parolingizni kiriting. Ushbu amal qaytarilmasdir!
+        </p>
+
+        <form onsubmit="handleAccountDelete(event)">
+            <div class="form-group" style="text-align: left;">
+                <label class="form-label" for="delPassword">Joriy Parolingiz</label>
+                <div class="form-input-box">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="delPassword" class="form-input" placeholder="Parolingizni kiriting" required autocomplete="current-password">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+                <button type="button" class="btn btn-outline" onclick="closeDeleteModal()">
+                    Bekor Qilish
+                </button>
+                <button type="submit" class="btn btn-danger" id="delConfirmBtn">
+                    <i class="fa-solid fa-trash-can"></i> Ha, O'chirilsin
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function openDeleteModal() {
+    sfx.click();
+    document.getElementById("deleteModal").style.display = "flex";
+    document.getElementById("delPassword").focus();
+}
+
+function closeDeleteModal() {
+    sfx.click();
+    document.getElementById("deleteModal").style.display = "none";
+    document.getElementById("delPassword").value = "";
+}
+
+async function handleAccountDelete(e) {
+    e.preventDefault();
+    const pwd = document.getElementById("delPassword").value.trim();
+    const btn = document.getElementById("delConfirmBtn");
+
+    if (!pwd) {
+        showToast("Iltimos, parolingizni kiriting!", "danger");
+        return;
+    }
+
+    if (!confirm("Diqqat! Hisobingiz butunlay o'chiriladi. Rozimisiz?")) {
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> O\'chirilmoqda...';
+
+    try {
+        const res = await fetch("/api/user/delete-account", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: pwd })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            sfx.levelUp();
+            showToast(data.message, "success");
+            setTimeout(() => {
+                window.location.href = data.redirect_url || "/";
+            }, 1000);
+        } else {
+            sfx.wrong();
+            showToast(data.message || "Hisobni o'chirishda xatolik yuz berdi!", "danger");
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-trash-can"></i> Ha, O\'chirilsin';
+        }
+    } catch (err) {
+        sfx.wrong();
+        showToast("Server bilan bog'lanishda xatolik!", "danger");
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-trash-can"></i> Ha, O\'chirilsin';
+    }
+}
+</script>
+{% endblock %}
