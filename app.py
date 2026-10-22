@@ -182,6 +182,7 @@ def games_page():
     questions = db.get_all_questions()
     puzzles = db.get_all_puzzles()
     bugs = db.get_all_bugs()
+    outputs = db.get_all_outputs()
     leaderboard = db.get_leaderboard(limit=10)
     
     # JSON ga xavfsiz aylantirish
@@ -199,6 +200,7 @@ def games_page():
                            questions=questions, 
                            puzzles=puzzles, 
                            bugs=bugs, 
+                           outputs=outputs,
                            leaderboard=leaderboard)
 
 @app.route("/api/game/save-score", methods=["POST"])
@@ -255,13 +257,24 @@ def admin_dashboard():
     questions = db.get_all_questions()
     puzzles = db.get_all_puzzles()
     bugs = db.get_all_bugs()
+    outputs = db.get_all_outputs()
+
+    # JSON options unpacking for bugs
+    for b in bugs:
+        if isinstance(b.get("options_json"), str):
+            try:
+                b["options"] = json.loads(b["options_json"])
+            except Exception:
+                b["options"] = []
+
     return render_template("admin.html", 
                            active_page="admin",
                            stats=stats,
                            users=users,
                            questions=questions,
                            puzzles=puzzles,
-                           bugs=bugs)
+                           bugs=bugs,
+                           outputs=outputs)
 
 @app.route("/admin/logout")
 def admin_logout():
@@ -362,6 +375,61 @@ def api_admin_delete_puzzle(puzzle_id):
     conn.commit()
     conn.close()
     return jsonify({"success": True, "message": "Puzzle o'chirildi!"})
+
+# Bug Hunter Admin Endpoints
+@app.route("/api/admin/bugs/add", methods=["POST"])
+@admin_required
+def api_admin_add_bug():
+    data = request.get_json() or {}
+    title = data.get("title", "").strip()
+    code_with_bug = data.get("code_with_bug", "").strip()
+    bug_line = int(data.get("bug_line", 1))
+    options = data.get("options", [])
+    correct_index = int(data.get("correct_index", 0))
+    explanation = data.get("explanation", "").strip()
+    points = int(data.get("points", 20))
+
+    if not title or not code_with_bug or len(options) < 2:
+        return jsonify({"success": False, "message": "Sarlavha, kod va kamida 2 ta variant kiritilishi shart!"}), 400
+
+    db.add_bug(title, code_with_bug, bug_line, options, correct_index, explanation, points)
+    return jsonify({"success": True, "message": "Yangi Bug Hunter topshirig'i muvaffaqiyatli qo'shildi!"})
+
+@app.route("/api/admin/bugs/delete/<int:bug_id>", methods=["POST"])
+@admin_required
+def api_admin_delete_bug(bug_id):
+    db.delete_bug(bug_id)
+    return jsonify({"success": True, "message": "Bug Hunter topshirig'i o'chirildi!"})
+
+# Code Output Admin Endpoints
+@app.route("/api/admin/outputs/add", methods=["POST"])
+@admin_required
+def api_admin_add_output():
+    data = request.get_json() or {}
+    title = data.get("title", "").strip()
+    code_snippet = data.get("code_snippet", "").strip()
+    option_a = data.get("option_a", "").strip()
+    option_b = data.get("option_b", "").strip()
+    option_c = data.get("option_c", "").strip()
+    option_d = data.get("option_d", "").strip()
+    correct_index = int(data.get("correct_index", 0))
+    explanation = data.get("explanation", "").strip()
+    points = int(data.get("points", 15))
+
+    if not code_snippet or not option_a or not option_b:
+        return jsonify({"success": False, "message": "Kod va kamida A va B variantlari kiritilishi shart!"}), 400
+
+    if not title:
+        title = "Natijani toping"
+
+    db.add_output(title, code_snippet, option_a, option_b, option_c, option_d, correct_index, explanation, points)
+    return jsonify({"success": True, "message": "Yangi Code Output topshirig'i muvaffaqiyatli qo'shildi!"})
+
+@app.route("/api/admin/outputs/delete/<int:output_id>", methods=["POST"])
+@admin_required
+def api_admin_delete_output(output_id):
+    db.delete_output(output_id)
+    return jsonify({"success": True, "message": "Code Output topshirig'i o'chirildi!"})
 
 if __name__ == "__main__":
     import sys

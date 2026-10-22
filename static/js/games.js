@@ -16,7 +16,7 @@ let currentPuzzleBlocks = [];
 let currentBugIdx = 0;
 
 let currentOutputIdx = 0;
-const outputChallenges = [
+const defaultOutputChallenges = [
     {
         code: `a = [1, 2, 3]\nb = a\nb.append(4)\nprint(len(a))`,
         options: ["3", "4", "Error", "[1, 2, 3, 4]"],
@@ -46,6 +46,21 @@ const outputChallenges = [
         points: 15
     }
 ];
+
+function getOutputChallenges() {
+    if (window.ALGOPLAY_OUTPUTS && window.ALGOPLAY_OUTPUTS.length > 0) {
+        return window.ALGOPLAY_OUTPUTS.map(item => ({
+            id: item.id,
+            title: item.title,
+            code: item.code_snippet,
+            options: [item.option_a, item.option_b, item.option_c, item.option_d].filter(o => o !== null && o !== undefined && o !== ""),
+            correct: parseInt(item.correct_index) || 0,
+            explanation: item.explanation,
+            points: item.points || 15
+        }));
+    }
+    return defaultOutputChallenges;
+}
 
 // Switch Game Modes
 function switchGameMode(mode) {
@@ -405,7 +420,11 @@ function nextBugChallenge() {
 
 // ==================== 4. CODE OUTPUT PREDICTOR ====================
 function renderOutputChallenge() {
-    const challenge = outputChallenges[currentOutputIdx];
+    const challenges = getOutputChallenges();
+    if (!challenges.length) return;
+    if (currentOutputIdx >= challenges.length) currentOutputIdx = 0;
+
+    const challenge = challenges[currentOutputIdx];
     document.getElementById("outputReward").textContent = challenge.points;
     document.getElementById("outputCodeBox").textContent = challenge.code;
 
@@ -424,7 +443,8 @@ function renderOutputChallenge() {
 }
 
 function selectOutputAnswer(selectedIndex, clickedBtn) {
-    const challenge = outputChallenges[currentOutputIdx];
+    const challenges = getOutputChallenges();
+    const challenge = challenges[currentOutputIdx];
     const isCorrect = selectedIndex === challenge.correct;
 
     const buttons = document.querySelectorAll("#outputOptionsGrid .quiz-option-btn");
@@ -457,7 +477,8 @@ function selectOutputAnswer(selectedIndex, clickedBtn) {
 
 function nextOutputChallenge() {
     sfx.click();
-    currentOutputIdx = (currentOutputIdx + 1) % outputChallenges.length;
+    const challenges = getOutputChallenges();
+    currentOutputIdx = (currentOutputIdx + 1) % challenges.length;
     renderOutputChallenge();
 }
 

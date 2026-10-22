@@ -103,5 +103,33 @@ class AlgoPlayTestCase(unittest.TestCase):
         self.assertEqual(res2.status_code, 200)
         self.assertIn(b"AlgoPlay Boshqaruv Tizimi", res2.data)
 
+        # Test adding a bug challenge
+        res_bug = self.client.post("/api/admin/bugs/add", json={
+            "title": "Test Bug Challenge",
+            "code_with_bug": "print('test)",
+            "bug_line": 1,
+            "options": ["Quote missing", "Valid", "Other", "None"],
+            "correct_index": 0,
+            "explanation": "Missing quote",
+            "points": 20
+        })
+        self.assertEqual(res_bug.status_code, 200)
+        self.assertTrue(res_bug.get_json()["success"])
+
+        # Test adding a code output challenge
+        res_out = self.client.post("/api/admin/outputs/add", json={
+            "title": "Test Output",
+            "code_snippet": "print(2 + 2)",
+            "option_a": "4",
+            "option_b": "22",
+            "option_c": "Error",
+            "option_d": "None",
+            "correct_index": 0,
+            "explanation": "2 + 2 = 4",
+            "points": 15
+        })
+        self.assertEqual(res_out.status_code, 200)
+        self.assertTrue(res_out.get_json()["success"])
+
 if __name__ == "__main__":
     unittest.main()

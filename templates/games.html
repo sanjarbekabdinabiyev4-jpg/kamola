@@ -276,6 +276,7 @@ print(len(a))
     window.ALGOPLAY_QUESTIONS = {{ questions|tojson }};
     window.ALGOPLAY_PUZZLES = {{ puzzles|tojson }};
     window.ALGOPLAY_BUGS = {{ bugs|tojson }};
+    window.ALGOPLAY_OUTPUTS = {{ outputs|tojson }};
     window.CURRENT_USER = {{ (current_user|tojson) if current_user else 'null' }};
 </script>
 {% endblock %}

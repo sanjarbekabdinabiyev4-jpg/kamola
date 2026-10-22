@@ -137,6 +137,22 @@ def init_db():
     );
     """)
 
+    # 7. Outputs table (Natijani top o'yini)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS outputs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        code_snippet TEXT NOT NULL,
+        option_a TEXT NOT NULL,
+        option_b TEXT NOT NULL,
+        option_c TEXT NOT NULL,
+        option_d TEXT NOT NULL,
+        correct_index INTEGER NOT NULL,
+        explanation TEXT NOT NULL,
+        points INTEGER DEFAULT 15
+    );
+    """)
+
     conn.commit()
 
     # Default admin tekshirish va yaratish
@@ -163,6 +179,11 @@ def init_db():
     cursor.execute("SELECT COUNT(*) as count FROM bugs")
     if cursor.fetchone()["count"] == 0:
         seed_bugs(conn)
+
+    # Default outputs kiritish (agar bo'sh bo'lsa)
+    cursor.execute("SELECT COUNT(*) as count FROM outputs")
+    if cursor.fetchone()["count"] == 0:
+        seed_outputs(conn)
 
     conn.close()
 
@@ -375,6 +396,60 @@ def seed_bugs(conn):
     """, bugs_data)
     conn.commit()
 
+def seed_outputs(conn):
+    outputs_data = [
+        (
+            "Ro'yxat havolasi va o'zgarishi",
+            "a = [1, 2, 3]\nb = a\nb.append(4)\nprint(len(a))",
+            "3",
+            "4",
+            "Error",
+            "[1, 2, 3, 4]",
+            1,
+            "Python'da 'b = a' ro'yxatning yangi nusxasini emas, aynan o'sha xotira manziliga havolani beradi. b ga 4 qo'shilganda a ham o'zgaradi va uning uzunligi 4 bo'ladi.",
+            15
+        ),
+        (
+            "Lokal va Global o'zgaruvchilar",
+            "x = 10\ndef ozgartir():\n    x = 20\nozgartir()\nprint(x)",
+            "20",
+            "10",
+            "UnboundLocalError",
+            "None",
+            1,
+            "Funksiya ichidagi 'x = 20' faqat lokal o'zgaruvchidir. Global x o'zgaruvchisining qiymati o'zgarmaydi va 10 ligicha qoladi.",
+            15
+        ),
+        (
+            "Satrni kesish (Slicing)",
+            "matn = \"AlgoPlay\"\nprint(matn[0:4])",
+            "Algo",
+            "AlgoP",
+            "lgoP",
+            "AlgoPlay",
+            0,
+            "Satrni kesishda matn[0:4] 0-indeksdan boshlab 4-indeksgacha oladi (4 kirmaydi), ya'ni 'Algo'.",
+            10
+        ),
+        (
+            "Ro'yxatni songa ko'paytirish",
+            "sonlar = [1, 2, 3]\nprint(sonlar * 2)",
+            "[2, 4, 6]",
+            "[1, 2, 3, 1, 2, 3]",
+            "Error",
+            "[1, 2, 3, 2]",
+            1,
+            "Python'da ro'yxatni songa ko'paytirish uning elementlarini takrorlaydi, har bir sonni 2 ga ko'paytirmaydi.",
+            15
+        )
+    ]
+    cursor = conn.cursor()
+    cursor.executemany("""
+        INSERT INTO outputs (title, code_snippet, option_a, option_b, option_c, option_d, correct_index, explanation, points)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, outputs_data)
+    conn.commit()
+
 # --- Helper functions ---
 
 def register_user(phone, username, password):
@@ -532,6 +607,52 @@ def get_all_bugs():
     conn.close()
     return rows
 
+def get_all_outputs():
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM outputs ORDER BY id ASC")
+    rows = [dict(r) for r in cursor.fetchall()]
+    conn.close()
+    return rows
+
+def add_bug(title, code_with_bug, bug_line, options_list, correct_index, explanation, points=20):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO bugs (title, code_with_bug, bug_line, options_json, correct_index, explanation, points)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (title.strip(), code_with_bug.strip(), int(bug_line), json.dumps(options_list), int(correct_index), explanation.strip(), int(points)))
+    conn.commit()
+    conn.close()
+    return True
+
+def delete_bug(bug_id):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM bugs WHERE id = ?", (bug_id,))
+    conn.commit()
+    conn.close()
+    return True
+
+def add_output(title, code_snippet, option_a, option_b, option_c, option_d, correct_index, explanation, points=15):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO outputs (title, code_snippet, option_a, option_b, option_c, option_d, correct_index, explanation, points)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (title.strip(), code_snippet.strip(), option_a.strip(), option_b.strip(), option_c.strip(), option_d.strip(), int(correct_index), explanation.strip(), int(points)))
+    conn.commit()
+    conn.close()
+    return True
+
+def delete_output(output_id):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM outputs WHERE id = ?", (output_id,))
+    conn.commit()
+    conn.close()
+    return True
+
 def get_admin_stats():
     conn = get_db()
     cursor = conn.cursor()
@@ -543,6 +664,15 @@ def get_admin_stats():
 
     cursor.execute("SELECT COUNT(*) as total_questions FROM questions")
     q_stats = dict(cursor.fetchone())
+
+    cursor.execute("SELECT COUNT(*) as total_puzzles FROM puzzles")
+    p_stats = dict(cursor.fetchone())
+
+    cursor.execute("SELECT COUNT(*) as total_bugs FROM bugs")
+    b_stats = dict(cursor.fetchone())
+
+    cursor.execute("SELECT COUNT(*) as total_outputs FROM outputs")
+    o_stats = dict(cursor.fetchone())
 
     cursor.execute("""
         SELECT g.id, u.username, g.game_type, g.score, g.xp_earned, g.played_at
@@ -559,6 +689,9 @@ def get_admin_stats():
         "total_xp": user_stats["total_xp"],
         "total_games": game_stats["total_games"],
         "total_questions": q_stats["total_questions"],
+        "total_puzzles": p_stats["total_puzzles"],
+        "total_bugs": b_stats["total_bugs"],
+        "total_outputs": o_stats["total_outputs"],
         "recent_games": recent_games
     }
 

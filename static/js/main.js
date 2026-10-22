@@ -110,6 +110,46 @@ class SoundFX {
 
 const sfx = new SoundFX();
 
+// Theme Controller (Tun va Kun rejimi)
+class ThemeController {
+    constructor() {
+        this.theme = localStorage.getItem("algoplay_theme") || "dark";
+    }
+
+    applyTheme(theme, notify = false) {
+        this.theme = theme;
+        try {
+            localStorage.setItem("algoplay_theme", theme);
+        } catch (e) {}
+        document.documentElement.setAttribute("data-theme", theme);
+        const icon = document.getElementById("themeIcon");
+        const btn = document.getElementById("themeToggle");
+        if (icon) {
+            if (theme === "light") {
+                icon.className = "fa-solid fa-sun";
+                if (btn) btn.title = "Tun rejimiga o'tish (Qorong'i)";
+            } else {
+                icon.className = "fa-solid fa-moon";
+                if (btn) btn.title = "Kun rejimiga o'tish (Yorug')";
+            }
+        }
+        if (notify) {
+            if (theme === "light") {
+                showToast("☀️ Kun rejimi (Yorug') yoqildi", "info");
+            } else {
+                showToast("🌙 Tun rejimi (Qorong'i) yoqildi", "info");
+            }
+        }
+    }
+
+    toggle() {
+        const next = this.theme === "light" ? "dark" : "light";
+        this.applyTheme(next, true);
+    }
+}
+
+const themeCtrl = new ThemeController();
+
 // Toast Notifications
 function showToast(message, type = "success") {
     let container = document.getElementById("flashContainer");
@@ -348,6 +388,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (soundToggle) {
         soundToggle.addEventListener("click", () => sfx.toggle());
     }
+
+    // Theme Toggle button
+    const themeToggle = document.getElementById("themeToggle");
+    if (themeToggle) {
+        themeToggle.addEventListener("click", () => {
+            sfx.click();
+            themeCtrl.toggle();
+        });
+    }
+    themeCtrl.applyTheme(themeCtrl.theme, false);
 
     // Mobile nav toggle
     const navToggle = document.getElementById("navToggle");

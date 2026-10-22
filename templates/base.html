@@ -14,6 +14,14 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        (function() {
+            try {
+                const savedTheme = localStorage.getItem('algoplay_theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } catch (e) {}
+        })();
+    </script>
     {% block head %}{% endblock %}
 </head>
 <body class="bg-dark text-light">
@@ -88,6 +96,11 @@
 
                 <!-- User Stats / Action Right -->
                 <div class="nav-right">
+                    <!-- Theme Toggle (Kun / Tun) -->
+                    <button class="theme-toggle-btn" id="themeToggle" title="Tun va kun rejimini almashtirish">
+                        <i class="fa-solid fa-moon" id="themeIcon"></i>
+                    </button>
+
                     <!-- Sound Toggle -->
                     <button class="sound-toggle-btn" id="soundToggle" title="Ovozni yoqish/o'chirish">
                         <i class="fa-solid fa-volume-high" id="soundIcon"></i>

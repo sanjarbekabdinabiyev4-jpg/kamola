@@ -60,11 +60,11 @@
 
         <div class="admin-stat-card">
             <div class="admin-stat-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--green);">
-                <i class="fa-solid fa-circle-question"></i>
+                <i class="fa-solid fa-layer-group"></i>
             </div>
             <div class="admin-stat-info">
-                <h4>Test Savollari</h4>
-                <div class="num">{{ stats.total_questions }}</div>
+                <h4>Jami Topshiriqlar</h4>
+                <div class="num">{{ questions|length + puzzles|length + bugs|length + outputs|length }}</div>
             </div>
         </div>
     </div>
@@ -72,13 +72,22 @@
     <!-- Tabs Navigation -->
     <div class="admin-tabs">
         <button class="admin-tab-btn active" id="tabQuestionsBtn" onclick="switchAdminTab('questions')">
-            <i class="fa-solid fa-file-circle-question"></i> Yangi Test Savollari ({{ questions|length }})
+            <i class="fa-solid fa-brain"></i> 1. Quiz Savollari ({{ questions|length }})
         </button>
         <button class="admin-tab-btn" id="tabPuzzlesBtn" onclick="switchAdminTab('puzzles')">
-            <i class="fa-solid fa-puzzle-piece"></i> Yangi Kod Puzzlelar ({{ puzzles|length }})
+            <i class="fa-solid fa-puzzle-piece"></i> 2. Kod Puzzlelar ({{ puzzles|length }})
+        </button>
+        <button class="admin-tab-btn" id="tabBugsBtn" onclick="switchAdminTab('bugs')">
+            <i class="fa-solid fa-bug"></i> 3. Bug Hunter ({{ bugs|length }})
+        </button>
+        <button class="admin-tab-btn" id="tabOutputsBtn" onclick="switchAdminTab('outputs')">
+            <i class="fa-solid fa-terminal"></i> 4. Natijani Top ({{ outputs|length }})
         </button>
         <button class="admin-tab-btn" id="tabUsersBtn" onclick="switchAdminTab('users')">
-            <i class="fa-solid fa-users-gear"></i> Foydalanuvchilar Ro'yxati ({{ users|length }})
+            <i class="fa-solid fa-users-gear"></i> Foydalanuvchilar ({{ users|length }})
+        </button>
+        <button class="admin-tab-btn" id="tabLogsBtn" onclick="switchAdminTab('logs')">
+            <i class="fa-solid fa-clock-rotate-left"></i> O'yinlar Tarixi
         </button>
     </div>
 
@@ -311,7 +320,222 @@
         </div>
     </div>
 
-    <!-- 4. O'YINLAR TARIXI -->
+    <!-- 3. BUG HUNTER BO'LIMI -->
+    <div id="adminSectionBugs" class="admin-section-card" style="display: none;">
+        <div class="admin-card-header">
+            <h3><i class="fa-solid fa-bug" style="color: #f43f5e;"></i> Yangi Bug Hunter (Xatoni Top) Topshirig'i Qo'shish</h3>
+        </div>
+
+        <form onsubmit="handleCreateBug(event)" style="margin-bottom: 40px; background: rgba(255,255,255,0.02); padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Topshiriq Sarlavhasi</label>
+                    <input type="text" id="newBugTitle" class="form-input" style="padding-left: 16px;" placeholder="Masalan: Sintaksis xatoni aniqlang" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mukofot XP</label>
+                    <input type="number" id="newBugPoints" class="form-input" style="padding-left: 16px;" value="20" min="5" max="50">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Xatolik Bor Kod (Python)</label>
+                <textarea id="newBugCode" class="form-input" style="padding-left: 16px; min-height: 100px; font-family: var(--font-code); color: #fca5a5;" placeholder="def hisobla(a, b)&#10;    return a + b" required></textarea>
+            </div>
+
+            <div class="form-group" style="max-width: 250px;">
+                <label class="form-label">Xato Qaysi Qatorda? (Qator raqami)</label>
+                <input type="number" id="newBugLine" class="form-input" style="padding-left: 16px;" value="1" min="1" max="50" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label class="form-label">Variant 1</label>
+                    <input type="text" id="newBugOpt0" class="form-input" style="padding-left: 16px;" required placeholder="1-variant: Masalan, 1-qatorda ':' qolib ketgan">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Variant 2</label>
+                    <input type="text" id="newBugOpt1" class="form-input" style="padding-left: 16px;" required placeholder="2-variant: return noto'g'ri yozilgan">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Variant 3</label>
+                    <input type="text" id="newBugOpt2" class="form-input" style="padding-left: 16px;" required placeholder="3-variant: Argumentlar noto'g'ri">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Variant 4</label>
+                    <input type="text" id="newBugOpt3" class="form-input" style="padding-left: 16px;" required placeholder="4-variant: Kodda xato yo'q">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">To'g'ri Variant</label>
+                    <select id="newBugCorrect" class="form-input" style="padding-left: 16px;">
+                        <option value="0">Variant 1</option>
+                        <option value="1">Variant 2</option>
+                        <option value="2">Variant 3</option>
+                        <option value="3">Variant 4</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tushuntirish Matni</label>
+                    <input type="text" id="newBugExpl" class="form-input" style="padding-left: 16px;" placeholder="Xatolik sababi va yechimi (foydalanuvchiga ko'rsatiladi)" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-glow-purple">
+                <i class="fa-solid fa-plus"></i> Bug Hunter Topshirig'ini Qo'shish
+            </button>
+        </form>
+
+        <div class="admin-card-header">
+            <h3>Mavjud Barcha Bug Hunter Topshiriqlari</h3>
+        </div>
+
+        <div class="leaderboard-table-container">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sarlavha</th>
+                        <th>Xato Qatori</th>
+                        <th>XP</th>
+                        <th>Amal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for b in bugs %}
+                    <tr id="bugRow{{ b.id }}">
+                        <td><strong>#{{ b.id }}</strong></td>
+                        <td><strong>{{ b.title }}</strong></td>
+                        <td><span class="badge-beta" style="color: #fca5a5;">{{ b.bug_line }}-qator</span></td>
+                        <td><span style="color: var(--amber);">{{ b.points }} XP</span></td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteBug({{ b.id }})">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not bugs %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 25px; color: var(--text-muted);">
+                            Hozircha Bug Hunter topshiriqlari mavjud emas.
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 4. CODE OUTPUT BO'LIMI -->
+    <div id="adminSectionOutputs" class="admin-section-card" style="display: none;">
+        <div class="admin-card-header">
+            <h3><i class="fa-solid fa-terminal" style="color: var(--amber);"></i> Yangi Code Output (Natijani Top) Topshirig'i Qo'shish</h3>
+        </div>
+
+        <form onsubmit="handleCreateOutput(event)" style="margin-bottom: 40px; background: rgba(255,255,255,0.02); padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Topshiriq Sarlavhasi (Mavzusi)</label>
+                    <input type="text" id="newOutTitle" class="form-input" style="padding-left: 16px;" placeholder="Masalan: Ro'yxat indeksi va uzunligi" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mukofot XP</label>
+                    <input type="number" id="newOutPoints" class="form-input" style="padding-left: 16px;" value="15" min="5" max="50">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Bajariladigan Kod Namunasi</label>
+                <textarea id="newOutCode" class="form-input" style="padding-left: 16px; min-height: 100px; font-family: var(--font-code);" placeholder="a = [10, 20]&#10;print(len(a) * 2)" required></textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label class="form-label">Variant A</label>
+                    <input type="text" id="newOutOptA" class="form-input" style="padding-left: 16px;" required placeholder="A varianti natijasi">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Variant B</label>
+                    <input type="text" id="newOutOptB" class="form-input" style="padding-left: 16px;" required placeholder="B varianti natijasi">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Variant C</label>
+                    <input type="text" id="newOutOptC" class="form-input" style="padding-left: 16px;" required placeholder="C varianti natijasi">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Variant D</label>
+                    <input type="text" id="newOutOptD" class="form-input" style="padding-left: 16px;" required placeholder="D varianti natijasi">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">To'g'ri Javob Varianti</label>
+                    <select id="newOutCorrect" class="form-input" style="padding-left: 16px;">
+                        <option value="0">Variant A</option>
+                        <option value="1">Variant B</option>
+                        <option value="2">Variant C</option>
+                        <option value="3">Variant D</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tushuntirish Matni</label>
+                    <input type="text" id="newOutExpl" class="form-input" style="padding-left: 16px;" placeholder="Nega bunday natija chiqishining tushuntirishi" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-glow-primary">
+                <i class="fa-solid fa-plus"></i> Code Output Topshirig'ini Qo'shish
+            </button>
+        </form>
+
+        <div class="admin-card-header">
+            <h3>Mavjud Barcha Code Output Topshiriqlari</h3>
+        </div>
+
+        <div class="leaderboard-table-container">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sarlavha</th>
+                        <th>Variantlar</th>
+                        <th>To'g'ri</th>
+                        <th>XP</th>
+                        <th>Amal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for o in outputs %}
+                    <tr id="outRow{{ o.id }}">
+                        <td><strong>#{{ o.id }}</strong></td>
+                        <td><strong>{{ o.title }}</strong></td>
+                        <td style="color: var(--text-secondary); font-size: 0.88rem;">A: {{ o.option_a }} | B: {{ o.option_b }}</td>
+                        <td><strong style="color: var(--green);">{% if o.correct_index == 0 %}A{% elif o.correct_index == 1 %}B{% elif o.correct_index == 2 %}C{% else %}D{% endif %}</strong></td>
+                        <td><span style="color: var(--amber);">{{ o.points }} XP</span></td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteOutput({{ o.id }})">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not outputs %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 25px; color: var(--text-muted);">
+                            Hozircha Code Output topshiriqlari mavjud emas.
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 5. O'YINLAR TARIXI -->
     <div id="adminSectionLogs" class="admin-section-card" style="display: none;">
         <div class="admin-card-header">
             <h3><i class="fa-solid fa-clock-rotate-left"></i> Eng So'nggi O'yin Faolligi</h3>
@@ -358,7 +582,7 @@
 <script>
 function switchAdminTab(tab) {
     sfx.click();
-    const tabs = ['users', 'questions', 'puzzles', 'logs'];
+    const tabs = ['users', 'questions', 'puzzles', 'bugs', 'outputs', 'logs'];
     tabs.forEach(t => {
         const btn = document.getElementById(`tab${capitalize(t)}Btn`);
         const sec = document.getElementById(`adminSection${capitalize(t)}`);
@@ -490,6 +714,113 @@ async function deletePuzzle(pId) {
         if (data.success) {
             showToast(data.message, "success");
             const row = document.getElementById(`pRow${pId}`);
+            if (row) row.remove();
+        }
+    } catch (e) {
+        showToast("O'chirishda xatolik!", "danger");
+    }
+}
+
+// Add Bug Hunter
+async function handleCreateBug(e) {
+    e.preventDefault();
+    sfx.click();
+    const payload = {
+        title: document.getElementById("newBugTitle").value.trim(),
+        code_with_bug: document.getElementById("newBugCode").value.trim(),
+        bug_line: parseInt(document.getElementById("newBugLine").value) || 1,
+        options: [
+            document.getElementById("newBugOpt0").value.trim(),
+            document.getElementById("newBugOpt1").value.trim(),
+            document.getElementById("newBugOpt2").value.trim(),
+            document.getElementById("newBugOpt3").value.trim()
+        ],
+        correct_index: parseInt(document.getElementById("newBugCorrect").value) || 0,
+        explanation: document.getElementById("newBugExpl").value.trim(),
+        points: parseInt(document.getElementById("newBugPoints").value) || 20
+    };
+
+    try {
+        const res = await fetch("/api/admin/bugs/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+            sfx.levelUp();
+            showToast(data.message, "success");
+            setTimeout(() => window.location.reload(), 800);
+        } else {
+            showToast(data.message, "danger");
+        }
+    } catch (e) {
+        showToast("Bug Hunter topshirig'i qo'shishda xatolik!", "danger");
+    }
+}
+
+// Delete Bug
+async function deleteBug(bugId) {
+    if (!confirm("Ushbu Bug Hunter topshirig'ini o'chirmoqchimisiz?")) return;
+    sfx.click();
+    try {
+        const res = await fetch(`/api/admin/bugs/delete/${bugId}`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            showToast(data.message, "success");
+            const row = document.getElementById(`bugRow${bugId}`);
+            if (row) row.remove();
+        }
+    } catch (e) {
+        showToast("O'chirishda xatolik!", "danger");
+    }
+}
+
+// Add Code Output
+async function handleCreateOutput(e) {
+    e.preventDefault();
+    sfx.click();
+    const payload = {
+        title: document.getElementById("newOutTitle").value.trim(),
+        code_snippet: document.getElementById("newOutCode").value.trim(),
+        option_a: document.getElementById("newOutOptA").value.trim(),
+        option_b: document.getElementById("newOutOptB").value.trim(),
+        option_c: document.getElementById("newOutOptC").value.trim(),
+        option_d: document.getElementById("newOutOptD").value.trim(),
+        correct_index: parseInt(document.getElementById("newOutCorrect").value) || 0,
+        explanation: document.getElementById("newOutExpl").value.trim(),
+        points: parseInt(document.getElementById("newOutPoints").value) || 15
+    };
+
+    try {
+        const res = await fetch("/api/admin/outputs/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+            sfx.levelUp();
+            showToast(data.message, "success");
+            setTimeout(() => window.location.reload(), 800);
+        } else {
+            showToast(data.message, "danger");
+        }
+    } catch (e) {
+        showToast("Code Output topshirig'i qo'shishda xatolik!", "danger");
+    }
+}
+
+// Delete Code Output
+async function deleteOutput(outId) {
+    if (!confirm("Ushbu Code Output topshirig'ini o'chirmoqchimisiz?")) return;
+    sfx.click();
+    try {
+        const res = await fetch(`/api/admin/outputs/delete/${outId}`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            showToast(data.message, "success");
+            const row = document.getElementById(`outRow${outId}`);
             if (row) row.remove();
         }
     } catch (e) {
